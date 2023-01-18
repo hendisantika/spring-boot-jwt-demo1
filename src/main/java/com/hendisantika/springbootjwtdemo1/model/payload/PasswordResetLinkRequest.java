@@ -5,8 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,18 +14,15 @@ import javax.validation.constraints.NotNull;
  * Email: hendisantika@gmail.com
  * Telegram : @hendisantika34
  * Date: 1/19/23
- * Time: 06:43
+ * Time: 06:45
  * To change this template use File | Settings | File Templates.
  */
-@Schema(name = "Logout request", description = "The logout request payload")
+@Schema(name = "Password reset link request", description = "The password reset link payload")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LogOutRequest {
-
-    @Valid
-    @NotNull(message = "Device info cannot be null")
-    @Schema(name = "Device info", required = true, type = "object", allowableValues = "A valid " +
-            "deviceInfo object", accessMode = Schema.AccessMode.READ_ONLY)
-    private DeviceInfo deviceInfo;
+public class PasswordResetLinkRequest {
+    @NotBlank(message = "Email cannot be blank")
+    @Schema(name = "User registered email", required = true, allowableValues = "NonEmpty String")
+    private String email;
 }
