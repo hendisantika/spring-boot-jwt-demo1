@@ -1,5 +1,6 @@
 package com.hendisantika.springbootjwtdemo1.validation.validator;
 
+import com.hendisantika.springbootjwtdemo1.model.payload.PasswordResetRequest;
 import com.hendisantika.springbootjwtdemo1.validation.annotation.MatchPassword;
 
 import javax.validation.ConstraintValidator;
