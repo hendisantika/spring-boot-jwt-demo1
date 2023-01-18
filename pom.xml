@@ -177,6 +177,28 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.version}</version>
+				<executions>
+					<!-- pre-unit-test execution helps setting up some maven property,
+                      which will be used later by JaCoCo -->
+					<execution>
+						<id>coverage-unit-test</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<append>true</append>
+							<destFile>${project.basedir}/target/jacoco.exec</destFile>
+							<!-- passing property which will contains settings for JaCoCo agent.
+                              If not specified, then "argLine" would be used for "jar" packaging -->
+							<propertyName>surefireArgLine</propertyName>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
