@@ -41,8 +41,4 @@ public class Role {
     public Role(RoleName role) {
         this.role = role;
     }
-
-    public Role(RoleName role) {
-        this.role = role;
-    }
 }
