@@ -1,14 +1,15 @@
 package com.hendisantika.springbootjwtdemo1.validation.annotation;
 
-import com.hendisantika.springbootjwtdemo1.validation.validator.MatchPasswordValidator;
+import com.hendisantika.springbootjwtdemo1.validation.validator.NullOrNotBlankValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Created by IntelliJ IDEA.
@@ -17,19 +18,17 @@ import java.lang.annotation.Target;
  * Email: hendisantika@gmail.com
  * Telegram : @hendisantika34
  * Date: 1/18/23
- * Time: 12:22
+ * Time: 12:25
  * To change this template use File | Settings | File Templates.
  */
-@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = MatchPasswordValidator.class)
+@Target({ElementType.FIELD})
+@Retention(RUNTIME)
 @Documented
-public @interface MatchPassword {
-    String message() default "The new passwords must match";
+@Constraint(validatedBy = NullOrNotBlankValidator.class)
+public @interface NullOrNotBlank {
+    String message() default "{javax.validation.constraints.Pattern.message}";
 
     Class<?>[] groups() default {};
-
-    boolean allowNull() default false;
 
     Class<? extends Payload>[] payload() default {};
 }
