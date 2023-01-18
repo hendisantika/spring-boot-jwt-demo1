@@ -1,7 +1,7 @@
 package com.hendisantika.springbootjwtdemo1.model;
 
 import com.hendisantika.springbootjwtdemo1.model.audit.DateAudit;
-import com.hendisantika.springbootjwtdemo1.model.token.DeviceType;
+import com.hendisantika.springbootjwtdemo1.model.token.RefreshToken;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

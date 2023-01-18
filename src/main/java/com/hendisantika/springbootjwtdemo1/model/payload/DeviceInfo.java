@@ -1,6 +1,6 @@
 package com.hendisantika.springbootjwtdemo1.model.payload;
 
-import com.hendisantika.springbootjwtdemo1.model.token.DeviceType;
+import com.hendisantika.springbootjwtdemo1.model.DeviceType;
 import com.hendisantika.springbootjwtdemo1.validation.annotation.NullOrNotBlank;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

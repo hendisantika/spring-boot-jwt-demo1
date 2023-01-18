@@ -1,4 +1,4 @@
-package com.hendisantika.springbootjwtdemo1.model.token;
+package com.hendisantika.springbootjwtdemo1.model;
 
 /**
  * Created by IntelliJ IDEA.
