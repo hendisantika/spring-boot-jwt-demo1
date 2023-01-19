@@ -2,9 +2,8 @@ package com.hendisantika.springbootjwtdemo1.model;
 
 import com.hendisantika.springbootjwtdemo1.model.audit.DateAudit;
 import com.hendisantika.springbootjwtdemo1.validation.annotation.NullOrNotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
@@ -24,9 +23,8 @@ import java.util.Set;
  * To change this template use File | Settings | File Templates.
  */
 @Entity(name = "USER")
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
+@Setter
 public class User extends DateAudit {
 
     @Id
@@ -67,4 +65,38 @@ public class User extends DateAudit {
 
     @Column(name = "IS_EMAIL_VERIFIED", nullable = false)
     private Boolean isEmailVerified;
+
+    public User() {
+        super();
+    }
+
+    public User(User user) {
+        id = user.getId();
+        username = user.getUsername();
+        password = user.getPassword();
+        firstName = user.getFirstName();
+        lastName = user.getLastName();
+        email = user.getEmail();
+        active = user.getActive();
+        roles = user.getRoles();
+        isEmailVerified = user.getEmailVerified();
+    }
+
+    public Boolean getEmailVerified() {
+        return isEmailVerified;
+    }
+
+    public void addRole(Role role) {
+        roles.add(role);
+        role.getUserList().add(this);
+    }
+
+    public void addRoles(Set<Role> roles) {
+        roles.forEach(this::addRole);
+    }
+
+    public void removeRole(Role role) {
+        roles.remove(role);
+        role.getUserList().remove(this);
+    }
 }
