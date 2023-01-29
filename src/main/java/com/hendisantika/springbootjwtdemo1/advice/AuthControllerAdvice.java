@@ -2,6 +2,7 @@ package com.hendisantika.springbootjwtdemo1.advice;
 
 import com.hendisantika.springbootjwtdemo1.exception.AppException;
 import com.hendisantika.springbootjwtdemo1.exception.BadRequestException;
+import com.hendisantika.springbootjwtdemo1.exception.PasswordResetLinkException;
 import com.hendisantika.springbootjwtdemo1.exception.ResourceAlreadyInUseException;
 import com.hendisantika.springbootjwtdemo1.exception.ResourceNotFoundException;
 import com.hendisantika.springbootjwtdemo1.exception.UserLoginException;
@@ -145,6 +146,13 @@ public class AuthControllerAdvice {
     @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
     @ResponseBody
     public ApiResponse handleUserRegistrationException(UserRegistrationException ex, WebRequest request) {
+        return new ApiResponse(false, ex.getMessage(), ex.getClass().getName(), resolvePathFromWebRequest(request));
+    }
+
+    @ExceptionHandler(value = PasswordResetLinkException.class)
+    @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
+    @ResponseBody
+    public ApiResponse handlePasswordResetLinkException(PasswordResetLinkException ex, WebRequest request) {
         return new ApiResponse(false, ex.getMessage(), ex.getClass().getName(), resolvePathFromWebRequest(request));
     }
 }
