@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -113,6 +114,13 @@ public class AuthControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ApiResponse handleBadRequestException(BadRequestException ex, WebRequest request) {
+        return new ApiResponse(false, ex.getMessage(), ex.getClass().getName(), resolvePathFromWebRequest(request));
+    }
+
+    @ExceptionHandler(value = UsernameNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public ApiResponse handleUsernameNotFoundException(UsernameNotFoundException ex, WebRequest request) {
         return new ApiResponse(false, ex.getMessage(), ex.getClass().getName(), resolvePathFromWebRequest(request));
     }
 }
