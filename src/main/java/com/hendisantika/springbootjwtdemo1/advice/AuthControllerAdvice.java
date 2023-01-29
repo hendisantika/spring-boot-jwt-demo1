@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -129,6 +130,13 @@ public class AuthControllerAdvice {
     @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
     @ResponseBody
     public ApiResponse handleUserLoginException(UserLoginException ex, WebRequest request) {
+        return new ApiResponse(false, ex.getMessage(), ex.getClass().getName(), resolvePathFromWebRequest(request));
+    }
+
+    @ExceptionHandler(value = BadCredentialsException.class)
+    @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
+    @ResponseBody
+    public ApiResponse handleBadCredentialsException(BadCredentialsException ex, WebRequest request) {
         return new ApiResponse(false, ex.getMessage(), ex.getClass().getName(), resolvePathFromWebRequest(request));
     }
 }
