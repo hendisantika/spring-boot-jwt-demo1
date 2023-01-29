@@ -1,6 +1,7 @@
 package com.hendisantika.springbootjwtdemo1.advice;
 
 import com.hendisantika.springbootjwtdemo1.exception.AppException;
+import com.hendisantika.springbootjwtdemo1.exception.BadRequestException;
 import com.hendisantika.springbootjwtdemo1.exception.ResourceAlreadyInUseException;
 import com.hendisantika.springbootjwtdemo1.exception.ResourceNotFoundException;
 import com.hendisantika.springbootjwtdemo1.model.payload.ApiResponse;
@@ -105,6 +106,13 @@ public class AuthControllerAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     public ApiResponse handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
+        return new ApiResponse(false, ex.getMessage(), ex.getClass().getName(), resolvePathFromWebRequest(request));
+    }
+
+    @ExceptionHandler(value = BadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ApiResponse handleBadRequestException(BadRequestException ex, WebRequest request) {
         return new ApiResponse(false, ex.getMessage(), ex.getClass().getName(), resolvePathFromWebRequest(request));
     }
 }
