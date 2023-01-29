@@ -3,7 +3,18 @@ package com.hendisantika.springbootjwtdemo1.advice;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by IntelliJ IDEA.
@@ -25,5 +36,15 @@ public class AuthControllerAdvice {
     @Autowired
     public AuthControllerAdvice(MessageSource messageSource) {
         this.messageSource = messageSource;
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ApiResponse processValidationError(MethodArgumentNotValidException ex, WebRequest request) {
+        BindingResult result = ex.getBindingResult();
+        List<ObjectError> allErrors = result.getAllErrors();
+        String data = processAllErrors(allErrors).stream().collect(Collectors.joining("\n"));
+        return new ApiResponse(false, data, ex.getClass().getName(), resolvePathFromWebRequest(request));
     }
 }
