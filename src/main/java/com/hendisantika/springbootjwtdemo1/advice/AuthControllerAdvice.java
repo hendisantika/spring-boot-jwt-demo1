@@ -1,5 +1,6 @@
 package com.hendisantika.springbootjwtdemo1.advice;
 
+import com.hendisantika.springbootjwtdemo1.model.payload.ApiResponse;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -46,5 +47,15 @@ public class AuthControllerAdvice {
         List<ObjectError> allErrors = result.getAllErrors();
         String data = processAllErrors(allErrors).stream().collect(Collectors.joining("\n"));
         return new ApiResponse(false, data, ex.getClass().getName(), resolvePathFromWebRequest(request));
+    }
+
+    /**
+     * Utility Method to generate localized message for a list of field errors
+     *
+     * @param allErrors the field errors
+     * @return the list
+     */
+    private List<String> processAllErrors(List<ObjectError> allErrors) {
+        return allErrors.stream().map(this::resolveLocalizedErrorMessage).collect(Collectors.toList());
     }
 }
