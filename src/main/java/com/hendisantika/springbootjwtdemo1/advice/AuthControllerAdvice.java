@@ -1,5 +1,6 @@
 package com.hendisantika.springbootjwtdemo1.advice;
 
+import com.hendisantika.springbootjwtdemo1.exception.AppException;
 import com.hendisantika.springbootjwtdemo1.model.payload.ApiResponse;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,5 +83,12 @@ public class AuthControllerAdvice {
         } catch (Exception ex) {
             return null;
         }
+    }
+
+    @ExceptionHandler(value = AppException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public ApiResponse handleAppException(AppException ex, WebRequest request) {
+        return new ApiResponse(false, ex.getMessage(), ex.getClass().getName(), resolvePathFromWebRequest(request));
     }
 }
