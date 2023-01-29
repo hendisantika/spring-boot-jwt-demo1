@@ -163,4 +163,11 @@ public class AuthControllerAdvice {
     public ApiResponse handleMailSendException(MailSendException ex, WebRequest request) {
         return new ApiResponse(false, ex.getMessage(), ex.getClass().getName(), resolvePathFromWebRequest(request));
     }
+
+    @ExceptionHandler(value = InvalidTokenRequestException.class)
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    @ResponseBody
+    public ApiResponse handleInvalidTokenException(InvalidTokenRequestException ex, WebRequest request) {
+        return new ApiResponse(false, ex.getMessage(), ex.getClass().getName(), resolvePathFromWebRequest(request));
+    }
 }
