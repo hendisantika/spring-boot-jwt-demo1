@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
 import java.util.List;
@@ -73,5 +74,13 @@ public class AuthControllerAdvice {
         String localizedErrorMessage = messageSource.getMessage(objectError, currentLocale);
         logger.info(localizedErrorMessage);
         return localizedErrorMessage;
+    }
+
+    private String resolvePathFromWebRequest(WebRequest request) {
+        try {
+            return ((ServletWebRequest) request).getRequest().getAttribute("javax.servlet.forward.request_uri").toString();
+        } catch (Exception ex) {
+            return null;
+        }
     }
 }
