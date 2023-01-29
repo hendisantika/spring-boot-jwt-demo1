@@ -4,6 +4,7 @@ import com.hendisantika.springbootjwtdemo1.model.payload.ApiResponse;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -57,5 +59,19 @@ public class AuthControllerAdvice {
      */
     private List<String> processAllErrors(List<ObjectError> allErrors) {
         return allErrors.stream().map(this::resolveLocalizedErrorMessage).collect(Collectors.toList());
+    }
+
+    /**
+     * Resolve localized error message. Utility method to generate a localized error
+     * message
+     *
+     * @param objectError the field error
+     * @return the string
+     */
+    private String resolveLocalizedErrorMessage(ObjectError objectError) {
+        Locale currentLocale = LocaleContextHolder.getLocale();
+        String localizedErrorMessage = messageSource.getMessage(objectError, currentLocale);
+        logger.info(localizedErrorMessage);
+        return localizedErrorMessage;
     }
 }
