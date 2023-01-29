@@ -184,4 +184,11 @@ public class AuthControllerAdvice {
     public ApiResponse handleTokenRefreshException(TokenRefreshException ex, WebRequest request) {
         return new ApiResponse(false, ex.getMessage(), ex.getClass().getName(), resolvePathFromWebRequest(request));
     }
+
+    @ExceptionHandler(value = UserLogoutException.class)
+    @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
+    @ResponseBody
+    public ApiResponse handleUserLogoutException(UserLogoutException ex, WebRequest request) {
+        return new ApiResponse(false, ex.getMessage(), ex.getClass().getName(), resolvePathFromWebRequest(request));
+    }
 }
