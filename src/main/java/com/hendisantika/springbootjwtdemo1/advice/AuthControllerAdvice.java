@@ -170,4 +170,11 @@ public class AuthControllerAdvice {
     public ApiResponse handleInvalidTokenException(InvalidTokenRequestException ex, WebRequest request) {
         return new ApiResponse(false, ex.getMessage(), ex.getClass().getName(), resolvePathFromWebRequest(request));
     }
+
+    @ExceptionHandler(value = UpdatePasswordException.class)
+    @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
+    @ResponseBody
+    public ApiResponse handleUpdatePasswordException(UpdatePasswordException ex, WebRequest request) {
+        return new ApiResponse(false, ex.getMessage(), ex.getClass().getName(), resolvePathFromWebRequest(request));
+    }
 }
