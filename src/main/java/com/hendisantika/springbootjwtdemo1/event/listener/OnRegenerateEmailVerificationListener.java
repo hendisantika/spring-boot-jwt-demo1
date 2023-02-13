@@ -1,11 +1,16 @@
 package com.hendisantika.springbootjwtdemo1.event.listener;
 
 import com.hendisantika.springbootjwtdemo1.event.OnRegenerateEmailVerificationEvent;
+import com.hendisantika.springbootjwtdemo1.model.token.EmailVerificationToken;
+import freemarker.template.TemplateException;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+
+import javax.mail.MessagingException;
+import java.io.IOException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,5 +40,23 @@ public class OnRegenerateEmailVerificationListener implements ApplicationListene
     @Async
     public void onApplicationEvent(OnRegenerateEmailVerificationEvent onRegenerateEmailVerificationEvent) {
         resendEmailVerification(onRegenerateEmailVerificationEvent);
+    }
+
+    /**
+     * Send email verification to the user and persist the token in the database.
+     */
+    private void resendEmailVerification(OnRegenerateEmailVerificationEvent event) {
+        User user = event.getUser();
+        EmailVerificationToken emailVerificationToken = event.getToken();
+        String recipientAddress = user.getEmail();
+
+        String emailConfirmationUrl =
+                event.getRedirectUrl().queryParam("token", emailVerificationToken.getToken()).toUriString();
+        try {
+            mailService.sendEmailVerification(emailConfirmationUrl, recipientAddress);
+        } catch (IOException | TemplateException | MessagingException e) {
+            logger.error(e);
+            throw new MailSendException(recipientAddress, "Email Verification");
+        }
     }
 }
