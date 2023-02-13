@@ -1,10 +1,16 @@
 package com.hendisantika.springbootjwtdemo1.service;
 
 import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+
+import javax.mail.MessagingException;
+import java.io.IOException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -36,5 +42,21 @@ public class MailService {
     public MailService(JavaMailSender mailSender, Configuration templateConfiguration) {
         this.mailSender = mailSender;
         this.templateConfiguration = templateConfiguration;
+    }
+
+    public void sendEmailVerification(String emailVerificationUrl, String to)
+            throws IOException, TemplateException, MessagingException {
+        Mail mail = new Mail();
+        mail.setSubject("Email Verification [Team CEP]");
+        mail.setTo(to);
+        mail.setFrom(mailFrom);
+        mail.getModel().put("userName", to);
+        mail.getModel().put("userEmailTokenVerificationLink", emailVerificationUrl);
+
+        templateConfiguration.setClassForTemplateLoading(getClass(), basePackagePath);
+        Template template = templateConfiguration.getTemplate("email-verification.ftl");
+        String mailContent = FreeMarkerTemplateUtils.processTemplateIntoString(template, mail.getModel());
+        mail.setContent(mailContent);
+        send(mail);
     }
 }
