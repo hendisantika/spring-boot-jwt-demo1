@@ -3,6 +3,7 @@ package com.hendisantika.springbootjwtdemo1.event.listener;
 import com.hendisantika.springbootjwtdemo1.event.OnUserAccountChangeEvent;
 import com.hendisantika.springbootjwtdemo1.exception.MailSendException;
 import com.hendisantika.springbootjwtdemo1.model.User;
+import com.hendisantika.springbootjwtdemo1.service.MailService;
 import freemarker.template.TemplateException;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
