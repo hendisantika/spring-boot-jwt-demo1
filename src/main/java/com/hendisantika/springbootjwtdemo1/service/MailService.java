@@ -11,6 +11,7 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by IntelliJ IDEA.
@@ -55,6 +56,28 @@ public class MailService {
 
         templateConfiguration.setClassForTemplateLoading(getClass(), basePackagePath);
         Template template = templateConfiguration.getTemplate("email-verification.ftl");
+        String mailContent = FreeMarkerTemplateUtils.processTemplateIntoString(template, mail.getModel());
+        mail.setContent(mailContent);
+        send(mail);
+    }
+
+    /**
+     * Setting the mail parameters.Send the reset link to the respective user's mail
+     */
+    public void sendResetLink(String resetPasswordLink, String to)
+            throws IOException, TemplateException, MessagingException {
+        Long expirationInMinutes = TimeUnit.MILLISECONDS.toMinutes(expiration);
+        String expirationInMinutesString = expirationInMinutes.toString();
+        Mail mail = new Mail();
+        mail.setSubject("Password Reset Link [Team CEP]");
+        mail.setTo(to);
+        mail.setFrom(mailFrom);
+        mail.getModel().put("userName", to);
+        mail.getModel().put("userResetPasswordLink", resetPasswordLink);
+        mail.getModel().put("expirationTime", expirationInMinutesString);
+
+        templateConfiguration.setClassForTemplateLoading(getClass(), basePackagePath);
+        Template template = templateConfiguration.getTemplate("reset-link.ftl");
         String mailContent = FreeMarkerTemplateUtils.processTemplateIntoString(template, mail.getModel());
         mail.setContent(mailContent);
         send(mail);
