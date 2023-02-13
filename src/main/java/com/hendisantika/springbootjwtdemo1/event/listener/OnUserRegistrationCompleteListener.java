@@ -1,11 +1,17 @@
 package com.hendisantika.springbootjwtdemo1.event.listener;
 
 import com.hendisantika.springbootjwtdemo1.event.OnUserRegistrationCompleteEvent;
+import com.hendisantika.springbootjwtdemo1.exception.MailSendException;
+import com.hendisantika.springbootjwtdemo1.model.User;
+import freemarker.template.TemplateException;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+
+import javax.mail.MessagingException;
+import java.io.IOException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -39,5 +45,24 @@ public class OnUserRegistrationCompleteListener implements ApplicationListener<O
     @Async
     public void onApplicationEvent(OnUserRegistrationCompleteEvent onUserRegistrationCompleteEvent) {
         sendEmailVerification(onUserRegistrationCompleteEvent);
+    }
+
+    /**
+     * Send email verification to the user and persist the token in the database.
+     */
+    private void sendEmailVerification(OnUserRegistrationCompleteEvent event) {
+        User user = event.getUser();
+        String token = emailVerificationTokenService.generateNewToken();
+        emailVerificationTokenService.createVerificationToken(user, token);
+
+        String recipientAddress = user.getEmail();
+        String emailConfirmationUrl = event.getRedirectUrl().queryParam("token", token).toUriString();
+
+        try {
+            mailService.sendEmailVerification(emailConfirmationUrl, recipientAddress);
+        } catch (IOException | TemplateException | MessagingException e) {
+            logger.error(e);
+            throw new MailSendException(recipientAddress, "Email Verification");
+        }
     }
 }
