@@ -1,4 +1,4 @@
-package com.hendisantika.springbootjwtdemo1.event.listener;
+package com.hendisantika.springbootjwtdemo1.event;
 
 import com.hendisantika.springbootjwtdemo1.model.token.EmailVerificationToken;
 import org.springframework.context.ApplicationEvent;
