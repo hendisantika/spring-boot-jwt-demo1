@@ -4,6 +4,7 @@ import com.hendisantika.springbootjwtdemo1.event.OnGenerateResetLinkEvent;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,5 +26,15 @@ public class OnGenerateResetLinkEventListener implements ApplicationListener<OnG
     @Autowired
     public OnGenerateResetLinkEventListener(MailService mailService) {
         this.mailService = mailService;
+    }
+
+    /**
+     * As soon as a forgot password link is clicked and a valid email id is entered,
+     * Reset password link will be sent to respective mail via this event
+     */
+    @Override
+    @Async
+    public void onApplicationEvent(OnGenerateResetLinkEvent onGenerateResetLinkMailEvent) {
+        sendResetLink(onGenerateResetLinkMailEvent);
     }
 }
