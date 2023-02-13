@@ -50,4 +50,8 @@ public class LoggedOutJwtTokenCache {
             tokenEventMap.put(token, event, ttlForToken, TimeUnit.SECONDS);
         }
     }
+
+    public OnUserLogoutSuccessEvent getLogoutEventForToken(String token) {
+        return tokenEventMap.get(token);
+    }
 }
