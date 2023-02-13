@@ -4,6 +4,7 @@ import com.hendisantika.springbootjwtdemo1.event.OnRegenerateEmailVerificationEv
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,5 +26,14 @@ public class OnRegenerateEmailVerificationListener implements ApplicationListene
     @Autowired
     public OnRegenerateEmailVerificationListener(MailService mailService) {
         this.mailService = mailService;
+    }
+
+    /**
+     * As soon as a registration event is complete, invoke the email verification
+     */
+    @Override
+    @Async
+    public void onApplicationEvent(OnRegenerateEmailVerificationEvent onRegenerateEmailVerificationEvent) {
+        resendEmailVerification(onRegenerateEmailVerificationEvent);
     }
 }
