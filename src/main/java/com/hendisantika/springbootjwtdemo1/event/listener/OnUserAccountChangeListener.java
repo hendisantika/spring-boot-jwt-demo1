@@ -4,6 +4,7 @@ import com.hendisantika.springbootjwtdemo1.event.OnUserAccountChangeEvent;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 /**
@@ -27,4 +28,13 @@ public class OnUserAccountChangeListener implements ApplicationListener<OnUserAc
         this.mailService = mailService;
     }
 
+    /**
+     * As soon as a registration event is complete, invoke the email verification
+     * asynchronously in an another thread pool
+     */
+    @Override
+    @Async
+    public void onApplicationEvent(OnUserAccountChangeEvent onUserAccountChangeEvent) {
+        sendAccountChangeEmail(onUserAccountChangeEvent);
+    }
 }
