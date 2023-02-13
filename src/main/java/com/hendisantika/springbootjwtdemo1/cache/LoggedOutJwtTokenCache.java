@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -53,5 +54,11 @@ public class LoggedOutJwtTokenCache {
 
     public OnUserLogoutSuccessEvent getLogoutEventForToken(String token) {
         return tokenEventMap.get(token);
+    }
+
+    private long getTTLForToken(Date date) {
+        long secondAtExpiry = date.toInstant().getEpochSecond();
+        long secondAtLogout = Instant.now().getEpochSecond();
+        return Math.max(0, secondAtExpiry - secondAtLogout);
     }
 }
