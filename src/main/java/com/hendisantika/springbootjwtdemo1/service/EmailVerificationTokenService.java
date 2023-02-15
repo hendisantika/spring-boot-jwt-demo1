@@ -4,6 +4,7 @@ import com.hendisantika.springbootjwtdemo1.exception.InvalidTokenRequestExceptio
 import com.hendisantika.springbootjwtdemo1.model.TokenStatus;
 import com.hendisantika.springbootjwtdemo1.model.User;
 import com.hendisantika.springbootjwtdemo1.model.token.EmailVerificationToken;
+import com.hendisantika.springbootjwtdemo1.repository.EmailVerificationTokenRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
