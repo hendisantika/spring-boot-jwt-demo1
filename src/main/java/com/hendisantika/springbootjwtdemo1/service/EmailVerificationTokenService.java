@@ -46,4 +46,14 @@ public class EmailVerificationTokenService {
         logger.info("Generated Email verification token [" + emailVerificationToken + "]");
         emailVerificationTokenRepository.save(emailVerificationToken);
     }
+
+    /**
+     * Updates an existing token in the database with a new expiration
+     */
+    public EmailVerificationToken updateExistingTokenWithNameAndExpiry(EmailVerificationToken existingToken) {
+        existingToken.setTokenStatus(TokenStatus.STATUS_PENDING);
+        existingToken.setExpiryDate(Instant.now().plusMillis(emailVerificationTokenExpiryDuration));
+        logger.info("Updated Email verification token [" + existingToken + "]");
+        return save(existingToken);
+    }
 }
