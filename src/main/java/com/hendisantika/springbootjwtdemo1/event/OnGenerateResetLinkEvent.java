@@ -1,5 +1,6 @@
 package com.hendisantika.springbootjwtdemo1.event;
 
+import com.hendisantika.springbootjwtdemo1.model.PasswordResetToken;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.web.util.UriComponentsBuilder;
 
