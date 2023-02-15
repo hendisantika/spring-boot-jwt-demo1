@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Created by IntelliJ IDEA.
@@ -70,5 +71,12 @@ public class EmailVerificationTokenService {
      */
     public EmailVerificationToken save(EmailVerificationToken emailVerificationToken) {
         return emailVerificationTokenRepository.save(emailVerificationToken);
+    }
+
+    /**
+     * Generates a new random UUID to be used as the token for email verification
+     */
+    public String generateNewToken() {
+        return UUID.randomUUID().toString();
     }
 }
