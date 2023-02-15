@@ -64,4 +64,11 @@ public class EmailVerificationTokenService {
     public Optional<EmailVerificationToken> findByToken(String token) {
         return emailVerificationTokenRepository.findByToken(token);
     }
+
+    /**
+     * Saves an email verification token in the repository
+     */
+    public EmailVerificationToken save(EmailVerificationToken emailVerificationToken) {
+        return emailVerificationTokenRepository.save(emailVerificationToken);
+    }
 }
