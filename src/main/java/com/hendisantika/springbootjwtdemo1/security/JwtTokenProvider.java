@@ -86,4 +86,12 @@ public class JwtTokenProvider {
 
         return claims.getExpiration();
     }
+
+    /**
+     * Return the jwt expiration for the client so that they can execute
+     * the refresh token logic appropriately
+     */
+    public long getExpiryDuration() {
+        return jwtExpirationInMs;
+    }
 }
