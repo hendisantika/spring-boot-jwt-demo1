@@ -112,4 +112,15 @@ public class JwtTokenProvider {
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
+
+    /**
+     * Private helper method to extract user authorities.
+     */
+    private String getUserAuthorities(CustomUserDetails customUserDetails) {
+        return customUserDetails
+                .getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+    }
 }
