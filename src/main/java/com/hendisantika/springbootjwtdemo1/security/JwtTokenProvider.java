@@ -1,6 +1,7 @@
 package com.hendisantika.springbootjwtdemo1.security;
 
 import com.hendisantika.springbootjwtdemo1.model.CustomUserDetails;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
@@ -60,5 +61,17 @@ public class JwtTokenProvider {
                 .setExpiration(Date.from(expiryDate))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
+    }
+
+    /**
+     * Returns the user id encapsulated within the token
+     */
+    public Long getUserIdFromJWT(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody();
+
+        return Long.parseLong(claims.getSubject());
     }
 }
