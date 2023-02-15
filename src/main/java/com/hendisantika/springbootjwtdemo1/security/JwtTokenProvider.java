@@ -74,4 +74,16 @@ public class JwtTokenProvider {
 
         return Long.parseLong(claims.getSubject());
     }
+
+    /**
+     * Returns the token expiration date encapsulated within the token
+     */
+    public Date getTokenExpiryFromJWT(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.getExpiration();
+    }
 }
