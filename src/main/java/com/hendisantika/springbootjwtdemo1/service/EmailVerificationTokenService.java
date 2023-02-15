@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.Optional;
 
 /**
  * Created by IntelliJ IDEA.
@@ -55,5 +56,12 @@ public class EmailVerificationTokenService {
         existingToken.setExpiryDate(Instant.now().plusMillis(emailVerificationTokenExpiryDuration));
         logger.info("Updated Email verification token [" + existingToken + "]");
         return save(existingToken);
+    }
+
+    /**
+     * Finds an email verification token by the @NaturalId token
+     */
+    public Optional<EmailVerificationToken> findByToken(String token) {
+        return emailVerificationTokenRepository.findByToken(token);
     }
 }
