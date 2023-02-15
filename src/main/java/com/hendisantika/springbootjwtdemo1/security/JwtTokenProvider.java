@@ -47,4 +47,18 @@ public class JwtTokenProvider {
                 .claim(AUTHORITIES_CLAIM, authorities)
                 .compact();
     }
+
+    /**
+     * Generates a token from a principal object. Embed the refresh token in the jwt
+     * so that a new jwt can be created
+     */
+    public String generateTokenFromUserId(Long userId) {
+        Instant expiryDate = Instant.now().plusMillis(jwtExpirationInMs);
+        return Jwts.builder()
+                .setSubject(Long.toString(userId))
+                .setIssuedAt(Date.from(Instant.now()))
+                .setExpiration(Date.from(expiryDate))
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
+    }
 }
