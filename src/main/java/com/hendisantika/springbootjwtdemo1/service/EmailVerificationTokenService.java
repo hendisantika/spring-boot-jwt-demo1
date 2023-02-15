@@ -1,5 +1,6 @@
 package com.hendisantika.springbootjwtdemo1.service;
 
+import com.hendisantika.springbootjwtdemo1.exception.InvalidTokenRequestException;
 import com.hendisantika.springbootjwtdemo1.model.TokenStatus;
 import com.hendisantika.springbootjwtdemo1.model.User;
 import com.hendisantika.springbootjwtdemo1.model.token.EmailVerificationToken;
@@ -78,5 +79,16 @@ public class EmailVerificationTokenService {
      */
     public String generateNewToken() {
         return UUID.randomUUID().toString();
+    }
+
+    /**
+     * Verify whether the token provided has expired or not on the basis of the current
+     * server time and/or throw error otherwise
+     */
+    public void verifyExpiration(EmailVerificationToken token) {
+        if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
+            throw new InvalidTokenRequestException("Email Verification Token", token.getToken(), "Expired token. " +
+                    "Please issue a new request");
+        }
     }
 }
