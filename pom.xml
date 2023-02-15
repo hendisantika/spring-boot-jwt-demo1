@@ -21,7 +21,7 @@
 		<!--Build-->
 		<jjwt.version>0.9.1</jjwt.version>
 		<log4j.version>1.2.17</log4j.version>
-		<spring.boot.version>2.7.7</spring.boot.version>
+		<spring.boot.version>2.7.8</spring.boot.version>
 		<freemarker.version>2.3.28</freemarker.version>
 		<swagger.version>3.0.0</swagger.version>
 		<expiring.map.version>0.5.10</expiring.map.version>
@@ -67,8 +67,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 
