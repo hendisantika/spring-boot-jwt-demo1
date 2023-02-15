@@ -1,5 +1,6 @@
 package com.hendisantika.springbootjwtdemo1.event;
 
+import com.hendisantika.springbootjwtdemo1.model.User;
 import com.hendisantika.springbootjwtdemo1.model.token.EmailVerificationToken;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.web.util.UriComponentsBuilder;

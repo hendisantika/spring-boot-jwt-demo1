@@ -1,5 +1,6 @@
 package com.hendisantika.springbootjwtdemo1.service;
 
+import com.hendisantika.springbootjwtdemo1.model.Mail;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;

@@ -1,5 +1,6 @@
 package com.hendisantika.springbootjwtdemo1.event;
 
+import com.hendisantika.springbootjwtdemo1.model.User;
 import org.springframework.context.ApplicationEvent;
 
 /**
