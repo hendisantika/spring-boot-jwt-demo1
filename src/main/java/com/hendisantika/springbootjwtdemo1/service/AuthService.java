@@ -159,4 +159,11 @@ public class AuthService {
     public String generateToken(CustomUserDetails customUserDetails) {
         return tokenProvider.generateToken(customUserDetails);
     }
+
+    /**
+     * Generates a JWT token for the validated client by userId
+     */
+    private String generateTokenFromUserId(Long userId) {
+        return tokenProvider.generateTokenFromUserId(userId);
+    }
 }
