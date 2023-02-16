@@ -1,13 +1,16 @@
 package com.hendisantika.springbootjwtdemo1.service;
 
+import com.hendisantika.springbootjwtdemo1.exception.PasswordResetLinkException;
 import com.hendisantika.springbootjwtdemo1.exception.ResourceAlreadyInUseException;
 import com.hendisantika.springbootjwtdemo1.exception.ResourceNotFoundException;
 import com.hendisantika.springbootjwtdemo1.exception.TokenRefreshException;
 import com.hendisantika.springbootjwtdemo1.exception.UpdatePasswordException;
 import com.hendisantika.springbootjwtdemo1.model.CustomUserDetails;
+import com.hendisantika.springbootjwtdemo1.model.PasswordResetToken;
 import com.hendisantika.springbootjwtdemo1.model.User;
 import com.hendisantika.springbootjwtdemo1.model.UserDevice;
 import com.hendisantika.springbootjwtdemo1.model.payload.LoginRequest;
+import com.hendisantika.springbootjwtdemo1.model.payload.PasswordResetLinkRequest;
 import com.hendisantika.springbootjwtdemo1.model.payload.RegistrationRequest;
 import com.hendisantika.springbootjwtdemo1.model.payload.TokenRefreshRequest;
 import com.hendisantika.springbootjwtdemo1.model.payload.UpdatePasswordRequest;
@@ -216,5 +219,16 @@ public class AuthService {
                         .map(this::generateToken))
                 .orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Missing refresh token in database" +
                         ".Please login again"));
+    }
+
+    /**
+     * Generates a password reset token from the given reset request
+     */
+    public Optional<PasswordResetToken> generatePasswordResetToken(PasswordResetLinkRequest passwordResetLinkRequest) {
+        String email = passwordResetLinkRequest.getEmail();
+        return userService.findByEmail(email)
+                .map(passwordResetService::createToken)
+                .orElseThrow(() -> new PasswordResetLinkException(email, "No matching user found for the given " +
+                        "request"));
     }
 }
