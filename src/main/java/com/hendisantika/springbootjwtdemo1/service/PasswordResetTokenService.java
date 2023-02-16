@@ -7,6 +7,7 @@ import com.hendisantika.springbootjwtdemo1.model.payload.PasswordResetRequest;
 import com.hendisantika.springbootjwtdemo1.repository.PasswordResetTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -53,5 +54,21 @@ public class PasswordResetTokenService {
     public Optional<PasswordResetToken> createToken(User user) {
         PasswordResetToken token = createTokenWithUser(user);
         return Optional.of(repository.save(token));
+    }
+
+    /**
+     * Mark this password reset token as claimed (used by user to update password)
+     * Since a user could have requested password multiple times, multiple tokens
+     * would be generated. Hence, we need to invalidate all the existing password
+     * reset tokens prior to changing the user password.
+     */
+    public PasswordResetToken claimToken(PasswordResetToken token) {
+        User user = token.getUser();
+        token.setClaimed(true);
+
+        CollectionUtils.emptyIfNull(passwordResetTokenRepository.findActiveTokensForUser(user))
+                .forEach(t -> t.setActive(false));
+
+        return token;
     }
 }
