@@ -5,10 +5,12 @@ import com.hendisantika.springbootjwtdemo1.exception.ResourceNotFoundException;
 import com.hendisantika.springbootjwtdemo1.exception.UpdatePasswordException;
 import com.hendisantika.springbootjwtdemo1.model.CustomUserDetails;
 import com.hendisantika.springbootjwtdemo1.model.User;
+import com.hendisantika.springbootjwtdemo1.model.UserDevice;
 import com.hendisantika.springbootjwtdemo1.model.payload.LoginRequest;
 import com.hendisantika.springbootjwtdemo1.model.payload.RegistrationRequest;
 import com.hendisantika.springbootjwtdemo1.model.payload.UpdatePasswordRequest;
 import com.hendisantika.springbootjwtdemo1.model.token.EmailVerificationToken;
+import com.hendisantika.springbootjwtdemo1.model.token.RefreshToken;
 import com.hendisantika.springbootjwtdemo1.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.apache.log4j.Logger;
@@ -165,5 +167,28 @@ public class AuthService {
      */
     private String generateTokenFromUserId(Long userId) {
         return tokenProvider.generateTokenFromUserId(userId);
+    }
+
+    /**
+     * Creates and persists the refresh token for the user device. If device exists
+     * already, we recreate the refresh token. Unused devices with expired tokens
+     * should be cleaned externally.
+     */
+    public Optional<RefreshToken> createAndPersistRefreshTokenForDevice(Authentication authentication,
+                                                                        LoginRequest loginRequest) {
+        User currentUser = (User) authentication.getPrincipal();
+        String deviceId = loginRequest.getDeviceInfo().getDeviceId();
+        userDeviceService.findDeviceByUserId(currentUser.getId(), deviceId)
+                .map(UserDevice::getRefreshToken)
+                .map(RefreshToken::getId)
+                .ifPresent(refreshTokenService::deleteById);
+
+        UserDevice userDevice = userDeviceService.createUserDevice(loginRequest.getDeviceInfo());
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken();
+        userDevice.setUser(currentUser);
+        userDevice.setRefreshToken(refreshToken);
+        refreshToken.setUserDevice(userDevice);
+        refreshToken = refreshTokenService.save(refreshToken);
+        return Optional.ofNullable(refreshToken);
     }
 }
