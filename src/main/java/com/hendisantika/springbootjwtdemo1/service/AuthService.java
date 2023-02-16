@@ -62,4 +62,13 @@ public class AuthService {
         return userService.existsByEmail(email);
     }
 
+    /**
+     * Checks if the given email already exists in the database repository or not
+     *
+     * @return true if the email exists else false
+     */
+    public Boolean usernameAlreadyExists(String username) {
+        return userService.existsByUsername(username);
+    }
+
 }
