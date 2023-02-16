@@ -107,4 +107,20 @@ public class AuthService {
         userService.save(registeredUser);
         return Optional.of(registeredUser);
     }
+
+    /**
+     * Attempt to regenerate a new email verification token given a valid
+     * previous expired token. If the previous token is valid, increase its expiry
+     * else update the token value and add a new expiration.
+     */
+    public Optional<EmailVerificationToken> recreateRegistrationToken(String existingToken) {
+        EmailVerificationToken emailVerificationToken = emailVerificationTokenService.findByToken(existingToken)
+                .orElseThrow(() -> new ResourceNotFoundException("Token", "Existing email verification",
+                        existingToken));
+
+        if (emailVerificationToken.getUser().getEmailVerified()) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(emailVerificationTokenService.updateExistingTokenWithNameAndExpiry(emailVerificationToken));
+    }
 }
