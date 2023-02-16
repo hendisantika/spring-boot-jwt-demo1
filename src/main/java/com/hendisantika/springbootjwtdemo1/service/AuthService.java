@@ -2,12 +2,14 @@ package com.hendisantika.springbootjwtdemo1.service;
 
 import com.hendisantika.springbootjwtdemo1.exception.ResourceAlreadyInUseException;
 import com.hendisantika.springbootjwtdemo1.exception.ResourceNotFoundException;
+import com.hendisantika.springbootjwtdemo1.exception.TokenRefreshException;
 import com.hendisantika.springbootjwtdemo1.exception.UpdatePasswordException;
 import com.hendisantika.springbootjwtdemo1.model.CustomUserDetails;
 import com.hendisantika.springbootjwtdemo1.model.User;
 import com.hendisantika.springbootjwtdemo1.model.UserDevice;
 import com.hendisantika.springbootjwtdemo1.model.payload.LoginRequest;
 import com.hendisantika.springbootjwtdemo1.model.payload.RegistrationRequest;
+import com.hendisantika.springbootjwtdemo1.model.payload.TokenRefreshRequest;
 import com.hendisantika.springbootjwtdemo1.model.payload.UpdatePasswordRequest;
 import com.hendisantika.springbootjwtdemo1.model.token.EmailVerificationToken;
 import com.hendisantika.springbootjwtdemo1.model.token.RefreshToken;
@@ -190,5 +192,29 @@ public class AuthService {
         refreshToken.setUserDevice(userDevice);
         refreshToken = refreshTokenService.save(refreshToken);
         return Optional.ofNullable(refreshToken);
+    }
+
+    /**
+     * Refresh the expired jwt token using a refresh token and device info. The
+     * * refresh token is mapped to a specific device and if it is unexpired, can help
+     * * generate a new jwt. If the refresh token is inactive for a device or it is expired,
+     * * throw appropriate errors.
+     */
+    public Optional<String> refreshJwtToken(TokenRefreshRequest tokenRefreshRequest) {
+        String requestRefreshToken = tokenRefreshRequest.getRefreshToken();
+
+        return Optional.of(refreshTokenService.findByToken(requestRefreshToken)
+                        .map(refreshToken -> {
+                            refreshTokenService.verifyExpiration(refreshToken);
+                            userDeviceService.verifyRefreshAvailability(refreshToken);
+                            refreshTokenService.increaseCount(refreshToken);
+                            return refreshToken;
+                        })
+                        .map(RefreshToken::getUserDevice)
+                        .map(UserDevice::getUser)
+                        .map(CustomUserDetails::new)
+                        .map(this::generateToken))
+                .orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Missing refresh token in database" +
+                        ".Please login again"));
     }
 }
