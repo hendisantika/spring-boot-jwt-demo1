@@ -56,7 +56,7 @@ public class PasswordResetTokenService {
      */
     public Optional<PasswordResetToken> createToken(User user) {
         PasswordResetToken token = createTokenWithUser(user);
-        return Optional.of(repository.save(token));
+        return Optional.of(passwordResetTokenRepository.save(token));
     }
 
     /**
