@@ -1,5 +1,6 @@
 package com.hendisantika.springbootjwtdemo1.service;
 
+import com.hendisantika.springbootjwtdemo1.exception.InvalidTokenRequestException;
 import com.hendisantika.springbootjwtdemo1.exception.ResourceNotFoundException;
 import com.hendisantika.springbootjwtdemo1.model.PasswordResetToken;
 import com.hendisantika.springbootjwtdemo1.model.User;
@@ -11,6 +12,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Optional;
 
 /**
@@ -70,5 +72,20 @@ public class PasswordResetTokenService {
                 .forEach(t -> t.setActive(false));
 
         return token;
+    }
+
+    /**
+     * Verify whether the token provided has expired or not on the basis of the current
+     * server time and/or throw error otherwise
+     */
+    void verifyExpiration(PasswordResetToken token) {
+        if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
+            throw new InvalidTokenRequestException("Password Reset Token", token.getToken(),
+                    "Expired token. Please issue a new request");
+        }
+        if (!token.getActive()) {
+            throw new InvalidTokenRequestException("Password Reset Token", token.getToken(),
+                    "Token was marked inactive");
+        }
     }
 }
