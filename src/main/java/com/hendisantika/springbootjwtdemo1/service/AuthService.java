@@ -123,4 +123,11 @@ public class AuthService {
         }
         return Optional.ofNullable(emailVerificationTokenService.updateExistingTokenWithNameAndExpiry(emailVerificationToken));
     }
+
+    /**
+     * Validates the password of the current logged in user with the given password
+     */
+    private Boolean currentPasswordMatches(User currentUser, String password) {
+        return passwordEncoder.matches(password, currentUser.getPassword());
+    }
 }
