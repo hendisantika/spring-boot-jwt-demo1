@@ -2,11 +2,13 @@ package com.hendisantika.springbootjwtdemo1.service;
 
 import com.hendisantika.springbootjwtdemo1.model.token.RefreshToken;
 import com.hendisantika.springbootjwtdemo1.repository.RefreshTokenRepository;
+import com.hendisantika.springbootjwtdemo1.util.Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Optional;
 
 /**
@@ -43,4 +45,14 @@ public class RefreshTokenService {
         return refreshTokenRepository.save(refreshToken);
     }
 
+    /**
+     * Creates and returns a new refresh token
+     */
+    public RefreshToken createRefreshToken() {
+        RefreshToken refreshToken = new RefreshToken();
+        refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
+        refreshToken.setToken(Util.generateRandomUuid());
+        refreshToken.setRefreshCount(0L);
+        return refreshToken;
+    }
 }
