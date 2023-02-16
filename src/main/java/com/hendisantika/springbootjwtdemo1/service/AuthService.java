@@ -153,4 +153,10 @@ public class AuthService {
         return Optional.of(currentUser);
     }
 
+    /**
+     * Generates a JWT token for the validated client
+     */
+    public String generateToken(CustomUserDetails customUserDetails) {
+        return tokenProvider.generateToken(customUserDetails);
+    }
 }
