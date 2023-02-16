@@ -2,9 +2,12 @@ package com.hendisantika.springbootjwtdemo1.service;
 
 import com.hendisantika.springbootjwtdemo1.exception.ResourceAlreadyInUseException;
 import com.hendisantika.springbootjwtdemo1.exception.ResourceNotFoundException;
+import com.hendisantika.springbootjwtdemo1.exception.UpdatePasswordException;
+import com.hendisantika.springbootjwtdemo1.model.CustomUserDetails;
 import com.hendisantika.springbootjwtdemo1.model.User;
 import com.hendisantika.springbootjwtdemo1.model.payload.LoginRequest;
 import com.hendisantika.springbootjwtdemo1.model.payload.RegistrationRequest;
+import com.hendisantika.springbootjwtdemo1.model.payload.UpdatePasswordRequest;
 import com.hendisantika.springbootjwtdemo1.model.token.EmailVerificationToken;
 import com.hendisantika.springbootjwtdemo1.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -130,4 +133,24 @@ public class AuthService {
     private Boolean currentPasswordMatches(User currentUser, String password) {
         return passwordEncoder.matches(password, currentUser.getPassword());
     }
+
+    /**
+     * Updates the password of the current logged in user
+     */
+    public Optional<User> updatePassword(CustomUserDetails customUserDetails,
+                                         UpdatePasswordRequest updatePasswordRequest) {
+        String email = customUserDetails.getEmail();
+        User currentUser = userService.findByEmail(email)
+                .orElseThrow(() -> new UpdatePasswordException(email, "No matching user found"));
+
+        if (!currentPasswordMatches(currentUser, updatePasswordRequest.getOldPassword())) {
+            logger.info("Current password is invalid for [" + currentUser.getPassword() + "]");
+            throw new UpdatePasswordException(currentUser.getEmail(), "Invalid current password");
+        }
+        String newPassword = passwordEncoder.encode(updatePasswordRequest.getNewPassword());
+        currentUser.setPassword(newPassword);
+        userService.save(currentUser);
+        return Optional.of(currentUser);
+    }
+
 }
