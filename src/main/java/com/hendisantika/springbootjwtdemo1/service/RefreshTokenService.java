@@ -1,5 +1,6 @@
 package com.hendisantika.springbootjwtdemo1.service;
 
+import com.hendisantika.springbootjwtdemo1.exception.TokenRefreshException;
 import com.hendisantika.springbootjwtdemo1.model.token.RefreshToken;
 import com.hendisantika.springbootjwtdemo1.repository.RefreshTokenRepository;
 import com.hendisantika.springbootjwtdemo1.util.Util;
@@ -54,5 +55,15 @@ public class RefreshTokenService {
         refreshToken.setToken(Util.generateRandomUuid());
         refreshToken.setRefreshCount(0L);
         return refreshToken;
+    }
+
+    /**
+     * Verify whether the token provided has expired or not on the basis of the current
+     * server time and/or throw error otherwise
+     */
+    public void verifyExpiration(RefreshToken token) {
+        if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
+            throw new TokenRefreshException(token.getToken(), "Expired token. Please issue a new request");
+        }
     }
 }
