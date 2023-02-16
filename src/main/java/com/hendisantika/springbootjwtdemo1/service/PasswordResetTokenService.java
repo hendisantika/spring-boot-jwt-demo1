@@ -6,6 +6,7 @@ import com.hendisantika.springbootjwtdemo1.model.PasswordResetToken;
 import com.hendisantika.springbootjwtdemo1.model.User;
 import com.hendisantika.springbootjwtdemo1.model.payload.PasswordResetRequest;
 import com.hendisantika.springbootjwtdemo1.repository.PasswordResetTokenRepository;
+import com.hendisantika.springbootjwtdemo1.util.Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -97,5 +98,16 @@ public class PasswordResetTokenService {
             throw new InvalidTokenRequestException("Password Reset Token", token.getToken(),
                     "Token is invalid for the given user " + requestEmail);
         }
+    }
+
+    PasswordResetToken createTokenWithUser(User user) {
+        String tokenID = Util.generateRandomUuid();
+        PasswordResetToken token = new PasswordResetToken();
+        token.setToken(tokenID);
+        token.setExpiryDate(Instant.now().plusMillis(expiration));
+        token.setClaimed(false);
+        token.setActive(true);
+        token.setUser(user);
+        return token;
     }
 }
