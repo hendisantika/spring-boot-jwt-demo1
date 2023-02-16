@@ -1,9 +1,11 @@
 package com.hendisantika.springbootjwtdemo1.service;
 
 import com.hendisantika.springbootjwtdemo1.exception.ResourceAlreadyInUseException;
+import com.hendisantika.springbootjwtdemo1.exception.ResourceNotFoundException;
 import com.hendisantika.springbootjwtdemo1.model.User;
 import com.hendisantika.springbootjwtdemo1.model.payload.LoginRequest;
 import com.hendisantika.springbootjwtdemo1.model.payload.RegistrationRequest;
+import com.hendisantika.springbootjwtdemo1.model.token.EmailVerificationToken;
 import com.hendisantika.springbootjwtdemo1.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.apache.log4j.Logger;
@@ -82,4 +84,27 @@ public class AuthService {
                 loginRequest.getPassword())));
     }
 
+
+    /**
+     * Confirms the user verification based on the token expiry and mark the user as active.
+     * If user is already verified, save the unnecessary database calls.
+     */
+    public Optional<User> confirmEmailRegistration(String emailToken) {
+        EmailVerificationToken emailVerificationToken = emailVerificationTokenService.findByToken(emailToken)
+                .orElseThrow(() -> new ResourceNotFoundException("Token", "Email verification", emailToken));
+
+        User registeredUser = emailVerificationToken.getUser();
+        if (registeredUser.getEmailVerified()) {
+            logger.info("User [" + emailToken + "] already registered.");
+            return Optional.of(registeredUser);
+        }
+
+        emailVerificationTokenService.verifyExpiration(emailVerificationToken);
+        emailVerificationToken.setConfirmedStatus();
+        emailVerificationTokenService.save(emailVerificationToken);
+
+        registeredUser.markVerificationConfirmed();
+        userService.save(registeredUser);
+        return Optional.of(registeredUser);
+    }
 }
