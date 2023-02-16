@@ -1,6 +1,7 @@
 package com.hendisantika.springbootjwtdemo1.security;
 
 import com.hendisantika.springbootjwtdemo1.cache.LoggedOutJwtTokenCache;
+import com.hendisantika.springbootjwtdemo1.event.OnUserLogoutSuccessEvent;
 import com.hendisantika.springbootjwtdemo1.exception.InvalidTokenRequestException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -11,6 +12,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.util.Date;
 
 /**
  * Created by IntelliJ IDEA.
@@ -68,5 +71,16 @@ public class JwtTokenValidator {
         }
         validateTokenIsNotForALoggedOutDevice(authToken);
         return true;
+    }
+
+    private void validateTokenIsNotForALoggedOutDevice(String authToken) {
+        OnUserLogoutSuccessEvent previouslyLoggedOutEvent = loggedOutTokenCache.getLogoutEventForToken(authToken);
+        if (previouslyLoggedOutEvent != null) {
+            String userEmail = previouslyLoggedOutEvent.getUserEmail();
+            Date logoutEventDate = previouslyLoggedOutEvent.getEventTime();
+            String errorMessage = String.format("Token corresponds to an already logged out user [%s] at [%s]. Please" +
+                    " login again", userEmail, logoutEventDate);
+            throw new InvalidTokenRequestException("JWT", authToken, errorMessage);
+        }
     }
 }
