@@ -36,4 +36,12 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Couldn't find a matching user email in the database" +
                         " for " + email));
     }
+
+    public UserDetails loadUserById(Long id) {
+        Optional<User> dbUser = userRepository.findById(id);
+        log.info("Fetched user : " + dbUser + " by " + id);
+        return dbUser.map(CustomUserDetails::new)
+                .orElseThrow(() -> new UsernameNotFoundException("Couldn't find a matching user id in the database " +
+                        "for " + id));
+    }
 }
