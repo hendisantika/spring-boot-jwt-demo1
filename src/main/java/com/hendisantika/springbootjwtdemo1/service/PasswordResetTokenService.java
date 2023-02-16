@@ -2,12 +2,15 @@ package com.hendisantika.springbootjwtdemo1.service;
 
 import com.hendisantika.springbootjwtdemo1.exception.ResourceNotFoundException;
 import com.hendisantika.springbootjwtdemo1.model.PasswordResetToken;
+import com.hendisantika.springbootjwtdemo1.model.User;
 import com.hendisantika.springbootjwtdemo1.model.payload.PasswordResetRequest;
 import com.hendisantika.springbootjwtdemo1.repository.PasswordResetTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 /**
  * Created by IntelliJ IDEA.
@@ -41,5 +44,14 @@ public class PasswordResetTokenService {
         matchEmail(token, request.getEmail());
         verifyExpiration(token);
         return token;
+    }
+
+    /**
+     * Creates and returns a new password token to which a user must be
+     * associated and persists in the token repository.
+     */
+    public Optional<PasswordResetToken> createToken(User user) {
+        PasswordResetToken token = createTokenWithUser(user);
+        return Optional.of(repository.save(token));
     }
 }
