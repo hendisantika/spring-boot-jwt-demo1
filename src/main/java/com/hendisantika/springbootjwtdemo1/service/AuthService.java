@@ -52,4 +52,14 @@ public class AuthService {
         User registeredNewUser = userService.save(newUser);
         return Optional.ofNullable(registeredNewUser);
     }
+
+    /**
+     * Checks if the given email already exists in the database repository or not
+     *
+     * @return true if the email exists else false
+     */
+    public Boolean emailAlreadyExists(String email) {
+        return userService.existsByEmail(email);
+    }
+
 }
