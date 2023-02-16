@@ -11,6 +11,7 @@ import com.hendisantika.springbootjwtdemo1.model.User;
 import com.hendisantika.springbootjwtdemo1.model.UserDevice;
 import com.hendisantika.springbootjwtdemo1.model.payload.LoginRequest;
 import com.hendisantika.springbootjwtdemo1.model.payload.PasswordResetLinkRequest;
+import com.hendisantika.springbootjwtdemo1.model.payload.PasswordResetRequest;
 import com.hendisantika.springbootjwtdemo1.model.payload.RegistrationRequest;
 import com.hendisantika.springbootjwtdemo1.model.payload.TokenRefreshRequest;
 import com.hendisantika.springbootjwtdemo1.model.payload.UpdatePasswordRequest;
@@ -230,5 +231,26 @@ public class AuthService {
                 .map(passwordResetService::createToken)
                 .orElseThrow(() -> new PasswordResetLinkException(email, "No matching user found for the given " +
                         "request"));
+    }
+
+    /**
+     * Reset a password given a reset request and return the updated user
+     * The reset token must match the email for the user and cannot be used again
+     * Since a user could have requested password multiple times, multiple tokens
+     * would be generated. Hence, we need to invalidate all the existing password
+     * reset tokens prior to changing the user password.
+     */
+    public Optional<User> resetPassword(PasswordResetRequest request) {
+        PasswordResetToken token = passwordResetService.getValidToken(request);
+        final String encodedPassword = passwordEncoder.encode(request.getConfirmPassword());
+
+        return Optional.of(token)
+                .map(passwordResetService::claimToken)
+                .map(PasswordResetToken::getUser)
+                .map(user -> {
+                    user.setPassword(encodedPassword);
+                    userService.save(user);
+                    return user;
+                });
     }
 }
