@@ -1,6 +1,7 @@
 package com.hendisantika.springbootjwtdemo1.service;
 
 import com.hendisantika.springbootjwtdemo1.model.UserDevice;
+import com.hendisantika.springbootjwtdemo1.model.token.RefreshToken;
 import com.hendisantika.springbootjwtdemo1.repository.UserDeviceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,5 +28,12 @@ public class UserDeviceService {
      */
     public Optional<UserDevice> findDeviceByUserId(Long userId, String deviceId) {
         return userDeviceRepository.findByUserIdAndDeviceId(userId, deviceId);
+    }
+
+    /**
+     * Find the user device info by refresh token
+     */
+    public Optional<UserDevice> findByRefreshToken(RefreshToken refreshToken) {
+        return userDeviceRepository.findByRefreshToken(refreshToken);
     }
 }
