@@ -41,4 +41,8 @@ public class Role {
     public Role(RoleName role) {
         this.role = role;
     }
+
+    public boolean isAdminRole() {
+        return null != this && this.role.equals(RoleName.ROLE_ADMIN);
+    }
 }

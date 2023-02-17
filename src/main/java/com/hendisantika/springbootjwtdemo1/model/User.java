@@ -99,4 +99,12 @@ public class User extends DateAudit {
         roles.remove(role);
         role.getUserList().remove(this);
     }
+
+    public void setEmailVerified(Boolean emailVerified) {
+        isEmailVerified = emailVerified;
+    }
+
+    public void markVerificationConfirmed() {
+        setEmailVerified(true);
+    }
 }
