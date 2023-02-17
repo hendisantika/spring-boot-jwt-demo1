@@ -50,4 +50,11 @@ public class UserService {
         return userRepository.findById(Id);
     }
 
+    /**
+     * Save the user to the database
+     */
+    public User save(User user) {
+        return userRepository.save(user);
+    }
+
 }
