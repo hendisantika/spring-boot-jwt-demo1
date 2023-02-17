@@ -1,5 +1,6 @@
 package com.hendisantika.springbootjwtdemo1.service;
 
+import com.hendisantika.springbootjwtdemo1.model.Role;
 import com.hendisantika.springbootjwtdemo1.model.User;
 import com.hendisantika.springbootjwtdemo1.model.payload.RegistrationRequest;
 import com.hendisantika.springbootjwtdemo1.repository.UserRepository;
@@ -8,7 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
@@ -86,4 +89,19 @@ public class UserService {
         newUser.setEmailVerified(false);
         return newUser;
     }
+
+    /**
+     * Performs a quick check to see what roles the new user could be assigned to.
+     *
+     * @return list of roles for the new user
+     */
+    private Set<Role> getRolesForNewUser(Boolean isToBeMadeAdmin) {
+        Set<Role> newUserRoles = new HashSet<>(roleService.findAll());
+        if (!isToBeMadeAdmin) {
+            newUserRoles.removeIf(Role::isAdminRole);
+        }
+        log.info("Setting user roles: " + newUserRoles);
+        return newUserRoles;
+    }
+
 }
