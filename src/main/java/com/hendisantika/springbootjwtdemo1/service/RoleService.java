@@ -1,8 +1,11 @@
 package com.hendisantika.springbootjwtdemo1.service;
 
+import com.hendisantika.springbootjwtdemo1.model.Role;
 import com.hendisantika.springbootjwtdemo1.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Collection;
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,4 +22,11 @@ import org.springframework.stereotype.Service;
 public class RoleService {
 
     private final RoleRepository roleRepository;
+
+    /**
+     * Find all roles from the database
+     */
+    public Collection<Role> findAll() {
+        return roleRepository.findAll();
+    }
 }
