@@ -66,4 +66,11 @@ public class RefreshTokenService {
             throw new TokenRefreshException(token.getToken(), "Expired token. Please issue a new request");
         }
     }
+
+    /**
+     * Delete the refresh token associated with the user device
+     */
+    public void deleteById(Long id) {
+        refreshTokenRepository.deleteById(id);
+    }
 }
