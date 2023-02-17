@@ -1,6 +1,7 @@
 package com.hendisantika.springbootjwtdemo1.service;
 
 import com.hendisantika.springbootjwtdemo1.model.User;
+import com.hendisantika.springbootjwtdemo1.model.payload.RegistrationRequest;
 import com.hendisantika.springbootjwtdemo1.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -71,4 +72,18 @@ public class UserService {
         return userRepository.existsByUsername(username);
     }
 
+    /**
+     * Creates a new user from the registration request
+     */
+    public User createUser(RegistrationRequest registerRequest) {
+        User newUser = new User();
+        Boolean isNewUserAsAdmin = registerRequest.getRegisterAsAdmin();
+        newUser.setEmail(registerRequest.getEmail());
+        newUser.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        newUser.setUsername(registerRequest.getUsername());
+        newUser.addRoles(getRolesForNewUser(isNewUserAsAdmin));
+        newUser.setActive(true);
+        newUser.setEmailVerified(false);
+        return newUser;
+    }
 }
