@@ -73,4 +73,13 @@ public class RefreshTokenService {
     public void deleteById(Long id) {
         refreshTokenRepository.deleteById(id);
     }
+
+    /**
+     * Increase the count of the token usage in the database. Useful for
+     * audit purposes
+     */
+    public void increaseCount(RefreshToken refreshToken) {
+        refreshToken.incrementRefreshCount();
+        save(refreshToken);
+    }
 }
