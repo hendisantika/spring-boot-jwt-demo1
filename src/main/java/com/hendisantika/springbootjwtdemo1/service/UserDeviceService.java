@@ -1,8 +1,11 @@
 package com.hendisantika.springbootjwtdemo1.service;
 
+import com.hendisantika.springbootjwtdemo1.model.UserDevice;
 import com.hendisantika.springbootjwtdemo1.repository.UserDeviceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,4 +21,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserDeviceService {
     private final UserDeviceRepository userDeviceRepository;
+
+    /**
+     * Find the user device info by user id
+     */
+    public Optional<UserDevice> findDeviceByUserId(Long userId, String deviceId) {
+        return userDeviceRepository.findByUserIdAndDeviceId(userId, deviceId);
+    }
 }
