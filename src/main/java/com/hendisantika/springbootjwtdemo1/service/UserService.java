@@ -1,10 +1,13 @@
 package com.hendisantika.springbootjwtdemo1.service;
 
+import com.hendisantika.springbootjwtdemo1.model.User;
 import com.hendisantika.springbootjwtdemo1.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 /**
  * Created by IntelliJ IDEA.
@@ -26,4 +29,10 @@ public class UserService {
     private final UserDeviceService userDeviceService;
     private final RefreshTokenService refreshTokenService;
 
+    /**
+     * Finds a user in the database by username
+     */
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
 }
