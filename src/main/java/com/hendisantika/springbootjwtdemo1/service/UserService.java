@@ -1,7 +1,12 @@
 package com.hendisantika.springbootjwtdemo1.service;
 
+import com.hendisantika.springbootjwtdemo1.annotation.CurrentUser;
+import com.hendisantika.springbootjwtdemo1.exception.UserLogoutException;
+import com.hendisantika.springbootjwtdemo1.model.CustomUserDetails;
 import com.hendisantika.springbootjwtdemo1.model.Role;
 import com.hendisantika.springbootjwtdemo1.model.User;
+import com.hendisantika.springbootjwtdemo1.model.UserDevice;
+import com.hendisantika.springbootjwtdemo1.model.payload.LogOutRequest;
 import com.hendisantika.springbootjwtdemo1.model.payload.RegistrationRequest;
 import com.hendisantika.springbootjwtdemo1.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -104,4 +109,18 @@ public class UserService {
         return newUserRoles;
     }
 
+    /**
+     * Log the given user out and delete the refresh token associated with it. If no device
+     * id is found matching the database for this user, throw a log out exception.
+     */
+    public void logoutUser(@CurrentUser CustomUserDetails currentUser, LogOutRequest logOutRequest) {
+        String deviceId = logOutRequest.getDeviceInfo().getDeviceId();
+        UserDevice userDevice = userDeviceService.findDeviceByUserId(currentUser.getId(), deviceId)
+                .filter(device -> device.getDeviceId().equals(deviceId))
+                .orElseThrow(() -> new UserLogoutException(logOutRequest.getDeviceInfo().getDeviceId(), "Invalid " +
+                        "device Id supplied. No matching device found for the given user "));
+
+        log.info("Removing refresh token associated with device [" + userDevice + "]");
+        refreshTokenService.deleteById(userDevice.getRefreshToken().getId());
+    }
 }
