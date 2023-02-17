@@ -1,6 +1,7 @@
 package com.hendisantika.springbootjwtdemo1.service;
 
 import com.hendisantika.springbootjwtdemo1.model.UserDevice;
+import com.hendisantika.springbootjwtdemo1.model.payload.DeviceInfo;
 import com.hendisantika.springbootjwtdemo1.model.token.RefreshToken;
 import com.hendisantika.springbootjwtdemo1.repository.UserDeviceRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,5 +36,17 @@ public class UserDeviceService {
      */
     public Optional<UserDevice> findByRefreshToken(RefreshToken refreshToken) {
         return userDeviceRepository.findByRefreshToken(refreshToken);
+    }
+
+    /**
+     * Creates a new user device and set the user to the current device
+     */
+    public UserDevice createUserDevice(DeviceInfo deviceInfo) {
+        UserDevice userDevice = new UserDevice();
+        userDevice.setDeviceId(deviceInfo.getDeviceId());
+        userDevice.setDeviceType(deviceInfo.getDeviceType());
+        userDevice.setNotificationToken(deviceInfo.getNotificationToken());
+        userDevice.setRefreshActive(true);
+        return userDevice;
     }
 }
