@@ -57,4 +57,11 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    /**
+     * Check is the user exists given the email: naturalId
+     */
+    public Boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
 }
