@@ -49,4 +49,12 @@ public class UserDevice extends DateAudit {
 
     @Column(name = "IS_REFRESH_ACTIVE")
     private Boolean isRefreshActive;
+
+    public Boolean getRefreshActive() {
+        return isRefreshActive;
+    }
+
+    public void setRefreshActive(Boolean refreshActive) {
+        isRefreshActive = refreshActive;
+    }
 }

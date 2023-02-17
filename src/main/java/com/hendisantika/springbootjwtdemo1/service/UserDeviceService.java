@@ -1,5 +1,6 @@
 package com.hendisantika.springbootjwtdemo1.service;
 
+import com.hendisantika.springbootjwtdemo1.exception.TokenRefreshException;
 import com.hendisantika.springbootjwtdemo1.model.UserDevice;
 import com.hendisantika.springbootjwtdemo1.model.payload.DeviceInfo;
 import com.hendisantika.springbootjwtdemo1.model.token.RefreshToken;
@@ -48,5 +49,20 @@ public class UserDeviceService {
         userDevice.setNotificationToken(deviceInfo.getNotificationToken());
         userDevice.setRefreshActive(true);
         return userDevice;
+    }
+
+    /**
+     * Check whether the user device corresponding to the token has refresh enabled and
+     * throw appropriate errors to the client
+     */
+    void verifyRefreshAvailability(RefreshToken refreshToken) {
+        UserDevice userDevice = findByRefreshToken(refreshToken)
+                .orElseThrow(() -> new TokenRefreshException(refreshToken.getToken(), "No device found for the " +
+                        "matching token. Please login again"));
+
+        if (!userDevice.getRefreshActive()) {
+            throw new TokenRefreshException(refreshToken.getToken(), "Refresh blocked for the device. Please login " +
+                    "through a different device");
+        }
     }
 }
