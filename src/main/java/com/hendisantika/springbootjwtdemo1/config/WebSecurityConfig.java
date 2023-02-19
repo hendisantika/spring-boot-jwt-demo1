@@ -1,6 +1,7 @@
 package com.hendisantika.springbootjwtdemo1.config;
 
 import com.hendisantika.springbootjwtdemo1.security.JwtAuthenticationEntryPoint;
+import com.hendisantika.springbootjwtdemo1.security.JwtAuthenticationFilter;
 import com.hendisantika.springbootjwtdemo1.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -47,4 +48,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManager() throws Exception {
         return super.authenticationManager();
     }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter();
+    }
+
 }
