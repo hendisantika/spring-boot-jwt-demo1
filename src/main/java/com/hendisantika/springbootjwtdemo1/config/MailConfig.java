@@ -1,9 +1,12 @@
 package com.hendisantika.springbootjwtdemo1.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean;
 
 /**
  * Created by IntelliJ IDEA.
@@ -47,4 +50,11 @@ public class MailConfig {
     @Value("${spring.mail.smtp.starttls.enable}")
     private String mailSmtpStartTls;
 
+    @Bean
+    @Primary
+    public FreeMarkerConfigurationFactoryBean getFreeMarkerConfiguration() {
+        FreeMarkerConfigurationFactoryBean bean = new FreeMarkerConfigurationFactoryBean();
+        bean.setTemplateLoaderPath("/templates/");
+        return bean;
+    }
 }
