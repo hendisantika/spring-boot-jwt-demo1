@@ -1,5 +1,6 @@
 package com.hendisantika.springbootjwtdemo1.service;
 
+import com.hendisantika.springbootjwtdemo1.model.CustomUserDetails;
 import com.hendisantika.springbootjwtdemo1.model.User;
 import com.hendisantika.springbootjwtdemo1.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
