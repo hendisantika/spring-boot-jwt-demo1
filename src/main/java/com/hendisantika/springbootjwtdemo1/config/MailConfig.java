@@ -5,8 +5,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean;
+
+import java.util.Properties;
 
 /**
  * Created by IntelliJ IDEA.
@@ -56,5 +60,24 @@ public class MailConfig {
         FreeMarkerConfigurationFactoryBean bean = new FreeMarkerConfigurationFactoryBean();
         bean.setTemplateLoaderPath("/templates/");
         return bean;
+    }
+
+    @Bean
+    public JavaMailSender getMailSender() {
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost(mailHost);
+        mailSender.setDefaultEncoding(mailDefaultEncoding);
+        mailSender.setPort(mailPort);
+        mailSender.setUsername(mailUsername);
+        mailSender.setPassword(mailPassword);
+
+        Properties javaMailProperties = new Properties();
+        javaMailProperties.put("mail.smtp.starttls.enable", mailSmtpStartTls);
+        javaMailProperties.put("mail.smtp.auth", mailSmtpAuth);
+        javaMailProperties.put("mail.transport.protocol", mailProtocol);
+        javaMailProperties.put("mail.debug", mailDebug);
+
+        mailSender.setJavaMailProperties(javaMailProperties);
+        return mailSender;
     }
 }
