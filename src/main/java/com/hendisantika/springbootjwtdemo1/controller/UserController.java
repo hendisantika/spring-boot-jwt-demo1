@@ -1,7 +1,11 @@
 package com.hendisantika.springbootjwtdemo1.controller;
 
 import com.hendisantika.springbootjwtdemo1.annotation.CurrentUser;
+import com.hendisantika.springbootjwtdemo1.event.OnUserAccountChangeEvent;
+import com.hendisantika.springbootjwtdemo1.exception.UpdatePasswordException;
 import com.hendisantika.springbootjwtdemo1.model.CustomUserDetails;
+import com.hendisantika.springbootjwtdemo1.model.payload.ApiResponse;
+import com.hendisantika.springbootjwtdemo1.model.payload.UpdatePasswordRequest;
 import com.hendisantika.springbootjwtdemo1.service.AuthService;
 import com.hendisantika.springbootjwtdemo1.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,11 +13,16 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 /**
  * Created by IntelliJ IDEA.
@@ -60,5 +69,25 @@ public class UserController {
     public ResponseEntity getAllAdmins() {
         logger.info("Inside secured resource with admin");
         return ResponseEntity.ok("Hello. This is about admins");
+    }
+
+    /**
+     * Updates the password of the current logged in user
+     */
+    @PostMapping("/password/update")
+    @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Allows the user to change his password once logged in by supplying the correct current " +
+            "password")
+    public ResponseEntity updateUserPassword(@CurrentUser CustomUserDetails customUserDetails,
+                                             @Param(value = "The UpdatePasswordRequest payload") @Valid @RequestBody UpdatePasswordRequest updatePasswordRequest) {
+
+        return authService.updatePassword(customUserDetails, updatePasswordRequest)
+                .map(updatedUser -> {
+                    OnUserAccountChangeEvent onUserPasswordChangeEvent = new OnUserAccountChangeEvent(updatedUser,
+                            "Update Password", "Change successful");
+                    applicationEventPublisher.publishEvent(onUserPasswordChangeEvent);
+                    return ResponseEntity.ok(new ApiResponse(true, "Password changed successfully"));
+                })
+                .orElseThrow(() -> new UpdatePasswordException("--Empty--", "No such user present."));
     }
 }
