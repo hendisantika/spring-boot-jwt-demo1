@@ -3,6 +3,7 @@ package com.hendisantika.springbootjwtdemo1.controller;
 import com.hendisantika.springbootjwtdemo1.event.OnGenerateResetLinkEvent;
 import com.hendisantika.springbootjwtdemo1.event.OnUserAccountChangeEvent;
 import com.hendisantika.springbootjwtdemo1.event.OnUserRegistrationCompleteEvent;
+import com.hendisantika.springbootjwtdemo1.exception.InvalidTokenRequestException;
 import com.hendisantika.springbootjwtdemo1.exception.PasswordResetException;
 import com.hendisantika.springbootjwtdemo1.exception.PasswordResetLinkException;
 import com.hendisantika.springbootjwtdemo1.exception.UserLoginException;
@@ -171,5 +172,20 @@ public class AuthController {
                 })
                 .orElseThrow(() -> new PasswordResetException(passwordResetRequest.getToken(), "Error in resetting " +
                         "password"));
+    }
+
+    /**
+     * Confirm the email verification token generated for the user during
+     * registration. If token is invalid or token is expired, report error.
+     */
+    @GetMapping("/registrationConfirmation")
+    @Operation(summary = "Confirms the email verification token that has been generated for the user during " +
+            "registration")
+    public ResponseEntity confirmRegistration(@Param(value = "the token that was sent to the user email") @RequestParam("token") String token) {
+
+        return authService.confirmEmailRegistration(token)
+                .map(user -> ResponseEntity.ok(new ApiResponse(true, "User verified successfully")))
+                .orElseThrow(() -> new InvalidTokenRequestException("Email Verification Token", token, "Failed to " +
+                        "confirm. Please generate a new email verification request"));
     }
 }
