@@ -1,10 +1,13 @@
 package com.hendisantika.springbootjwtdemo1.controller;
 
+import com.hendisantika.springbootjwtdemo1.event.OnUserRegistrationCompleteEvent;
 import com.hendisantika.springbootjwtdemo1.exception.UserLoginException;
+import com.hendisantika.springbootjwtdemo1.exception.UserRegistrationException;
 import com.hendisantika.springbootjwtdemo1.model.CustomUserDetails;
 import com.hendisantika.springbootjwtdemo1.model.payload.ApiResponse;
 import com.hendisantika.springbootjwtdemo1.model.payload.JwtAuthenticationResponse;
 import com.hendisantika.springbootjwtdemo1.model.payload.LoginRequest;
+import com.hendisantika.springbootjwtdemo1.model.payload.RegistrationRequest;
 import com.hendisantika.springbootjwtdemo1.model.token.RefreshToken;
 import com.hendisantika.springbootjwtdemo1.security.JwtTokenProvider;
 import com.hendisantika.springbootjwtdemo1.service.AuthService;
@@ -23,6 +26,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 
@@ -92,5 +97,28 @@ public class AuthController {
                             tokenProvider.getExpiryDuration()));
                 })
                 .orElseThrow(() -> new UserLoginException("Couldn't create refresh token for: [" + loginRequest + "]"));
+    }
+
+    /**
+     * Entry point for the user registration process. On successful registration,
+     * publish an event to generate email verification token
+     */
+    @PostMapping("/register")
+    @Operation(summary = "Registers the user and publishes an event to generate the email verification")
+    public ResponseEntity registerUser(@Param(value = "The RegistrationRequest payload") @Valid @RequestBody RegistrationRequest registrationRequest) {
+
+        return authService.registerUser(registrationRequest)
+                .map(user -> {
+                    UriComponentsBuilder urlBuilder = ServletUriComponentsBuilder.fromCurrentContextPath().path("/api" +
+                            "/auth/registrationConfirmation");
+                    OnUserRegistrationCompleteEvent onUserRegistrationCompleteEvent =
+                            new OnUserRegistrationCompleteEvent(user, urlBuilder);
+                    applicationEventPublisher.publishEvent(onUserRegistrationCompleteEvent);
+                    logger.info("Registered User returned [API[: " + user);
+                    return ResponseEntity.ok(new ApiResponse(true, "User registered successfully. Check your email " +
+                            "for verification"));
+                })
+                .orElseThrow(() -> new UserRegistrationException(registrationRequest.getEmail(), "Missing user object" +
+                        " in database"));
     }
 }
