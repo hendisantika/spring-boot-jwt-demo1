@@ -1,6 +1,7 @@
 package com.hendisantika.springbootjwtdemo1.controller;
 
 import com.hendisantika.springbootjwtdemo1.event.OnGenerateResetLinkEvent;
+import com.hendisantika.springbootjwtdemo1.event.OnRegenerateEmailVerificationEvent;
 import com.hendisantika.springbootjwtdemo1.event.OnUserAccountChangeEvent;
 import com.hendisantika.springbootjwtdemo1.event.OnUserRegistrationCompleteEvent;
 import com.hendisantika.springbootjwtdemo1.exception.InvalidTokenRequestException;
@@ -15,6 +16,7 @@ import com.hendisantika.springbootjwtdemo1.model.payload.LoginRequest;
 import com.hendisantika.springbootjwtdemo1.model.payload.PasswordResetLinkRequest;
 import com.hendisantika.springbootjwtdemo1.model.payload.PasswordResetRequest;
 import com.hendisantika.springbootjwtdemo1.model.payload.RegistrationRequest;
+import com.hendisantika.springbootjwtdemo1.model.token.EmailVerificationToken;
 import com.hendisantika.springbootjwtdemo1.model.token.RefreshToken;
 import com.hendisantika.springbootjwtdemo1.security.JwtTokenProvider;
 import com.hendisantika.springbootjwtdemo1.service.AuthService;
@@ -37,6 +39,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 /**
  * Created by IntelliJ IDEA.
@@ -187,5 +190,36 @@ public class AuthController {
                 .map(user -> ResponseEntity.ok(new ApiResponse(true, "User verified successfully")))
                 .orElseThrow(() -> new InvalidTokenRequestException("Email Verification Token", token, "Failed to " +
                         "confirm. Please generate a new email verification request"));
+    }
+
+    /**
+     * Resend the email registration mail with an updated token expiry. Safe to
+     * assume that the user would always click on the last re-verification email and
+     * any attempts at generating new token from past (possibly archived/deleted)
+     * tokens should fail and report an exception.
+     */
+    @GetMapping("/resendRegistrationToken")
+    @Operation(summary = "Resend the email registration with an updated token expiry. Safe to " +
+            "assume that the user would always click on the last re-verification email and " +
+            "any attempts at generating new token from past (possibly archived/deleted)" +
+            "tokens should fail and report an exception. ")
+    public ResponseEntity resendRegistrationToken(@Param(value = "the initial token that was sent to the user email " +
+            "after registration") @RequestParam("token") String existingToken) {
+
+        EmailVerificationToken newEmailToken = authService.recreateRegistrationToken(existingToken)
+                .orElseThrow(() -> new InvalidTokenRequestException("Email Verification Token", existingToken, "User " +
+                        "is already registered. No need to re-generate token"));
+
+        return Optional.ofNullable(newEmailToken.getUser())
+                .map(registeredUser -> {
+                    UriComponentsBuilder urlBuilder = ServletUriComponentsBuilder.fromCurrentContextPath().path("/api" +
+                            "/auth/registrationConfirmation");
+                    OnRegenerateEmailVerificationEvent regenerateEmailVerificationEvent =
+                            new OnRegenerateEmailVerificationEvent(registeredUser, urlBuilder, newEmailToken);
+                    applicationEventPublisher.publishEvent(regenerateEmailVerificationEvent);
+                    return ResponseEntity.ok(new ApiResponse(true, "Email verification resent successfully"));
+                })
+                .orElseThrow(() -> new InvalidTokenRequestException("Email Verification Token", existingToken, "No " +
+                        "user associated with this request. Re-verification denied"));
     }
 }
