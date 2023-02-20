@@ -50,4 +50,15 @@ public class UserController {
         logger.info(currentUser.getEmail() + " has role: " + currentUser.getRoles());
         return ResponseEntity.ok("Hello. This is about me");
     }
+
+    /**
+     * Returns all admins in the system. Requires Admin access
+     */
+    @GetMapping("/admins")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Returns the list of configured admins. Requires ADMIN Access")
+    public ResponseEntity getAllAdmins() {
+        logger.info("Inside secured resource with admin");
+        return ResponseEntity.ok("Hello. This is about admins");
+    }
 }
