@@ -1,12 +1,15 @@
 package com.hendisantika.springbootjwtdemo1.controller;
 
+import com.hendisantika.springbootjwtdemo1.event.OnGenerateResetLinkEvent;
 import com.hendisantika.springbootjwtdemo1.event.OnUserRegistrationCompleteEvent;
+import com.hendisantika.springbootjwtdemo1.exception.PasswordResetLinkException;
 import com.hendisantika.springbootjwtdemo1.exception.UserLoginException;
 import com.hendisantika.springbootjwtdemo1.exception.UserRegistrationException;
 import com.hendisantika.springbootjwtdemo1.model.CustomUserDetails;
 import com.hendisantika.springbootjwtdemo1.model.payload.ApiResponse;
 import com.hendisantika.springbootjwtdemo1.model.payload.JwtAuthenticationResponse;
 import com.hendisantika.springbootjwtdemo1.model.payload.LoginRequest;
+import com.hendisantika.springbootjwtdemo1.model.payload.PasswordResetLinkRequest;
 import com.hendisantika.springbootjwtdemo1.model.payload.RegistrationRequest;
 import com.hendisantika.springbootjwtdemo1.model.token.RefreshToken;
 import com.hendisantika.springbootjwtdemo1.security.JwtTokenProvider;
@@ -120,5 +123,29 @@ public class AuthController {
                 })
                 .orElseThrow(() -> new UserRegistrationException(registrationRequest.getEmail(), "Missing user object" +
                         " in database"));
+    }
+
+    /**
+     * Receives the reset link request and publishes an event to send email id containing
+     * the reset link if the request is valid. In future the deeplink should open within
+     * the app itself.
+     */
+    @PostMapping("/password/resetlink")
+    @Operation(summary = "Receive the reset link request and publish event to send mail containing the password " +
+            "reset link")
+    public ResponseEntity resetLink(@Param(value = "The PasswordResetLinkRequest payload") @Valid @RequestBody PasswordResetLinkRequest passwordResetLinkRequest) {
+
+        return authService.generatePasswordResetToken(passwordResetLinkRequest)
+                .map(passwordResetToken -> {
+                    UriComponentsBuilder urlBuilder = ServletUriComponentsBuilder.fromCurrentContextPath().path("/api" +
+                            "/auth/password/reset");
+                    OnGenerateResetLinkEvent generateResetLinkMailEvent =
+                            new OnGenerateResetLinkEvent(passwordResetToken,
+                                    urlBuilder);
+                    applicationEventPublisher.publishEvent(generateResetLinkMailEvent);
+                    return ResponseEntity.ok(new ApiResponse(true, "Password reset link sent successfully"));
+                })
+                .orElseThrow(() -> new PasswordResetLinkException(passwordResetLinkRequest.getEmail(), "Couldn't " +
+                        "create a valid token"));
     }
 }
