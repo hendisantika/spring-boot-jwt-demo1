@@ -7,6 +7,7 @@ import com.hendisantika.springbootjwtdemo1.event.OnUserRegistrationCompleteEvent
 import com.hendisantika.springbootjwtdemo1.exception.InvalidTokenRequestException;
 import com.hendisantika.springbootjwtdemo1.exception.PasswordResetException;
 import com.hendisantika.springbootjwtdemo1.exception.PasswordResetLinkException;
+import com.hendisantika.springbootjwtdemo1.exception.TokenRefreshException;
 import com.hendisantika.springbootjwtdemo1.exception.UserLoginException;
 import com.hendisantika.springbootjwtdemo1.exception.UserRegistrationException;
 import com.hendisantika.springbootjwtdemo1.model.CustomUserDetails;
@@ -16,6 +17,7 @@ import com.hendisantika.springbootjwtdemo1.model.payload.LoginRequest;
 import com.hendisantika.springbootjwtdemo1.model.payload.PasswordResetLinkRequest;
 import com.hendisantika.springbootjwtdemo1.model.payload.PasswordResetRequest;
 import com.hendisantika.springbootjwtdemo1.model.payload.RegistrationRequest;
+import com.hendisantika.springbootjwtdemo1.model.payload.TokenRefreshRequest;
 import com.hendisantika.springbootjwtdemo1.model.token.EmailVerificationToken;
 import com.hendisantika.springbootjwtdemo1.model.token.RefreshToken;
 import com.hendisantika.springbootjwtdemo1.security.JwtTokenProvider;
@@ -221,5 +223,25 @@ public class AuthController {
                 })
                 .orElseThrow(() -> new InvalidTokenRequestException("Email Verification Token", existingToken, "No " +
                         "user associated with this request. Re-verification denied"));
+    }
+
+    /**
+     * Refresh the expired jwt token using a refresh token for the specific device
+     * and return a new token to the caller
+     */
+    @PostMapping("/refresh")
+    @Operation(summary = "Refresh the expired jwt authentication by issuing a token refresh request and returns the" +
+            "updated response tokens")
+    public ResponseEntity refreshJwtToken(@Param(value = "The TokenRefreshRequest payload") @Valid @RequestBody TokenRefreshRequest tokenRefreshRequest) {
+
+        return authService.refreshJwtToken(tokenRefreshRequest)
+                .map(updatedToken -> {
+                    String refreshToken = tokenRefreshRequest.getRefreshToken();
+                    logger.info("Created new Jwt Auth token: " + updatedToken);
+                    return ResponseEntity.ok(new JwtAuthenticationResponse(updatedToken, refreshToken,
+                            tokenProvider.getExpiryDuration()));
+                })
+                .orElseThrow(() -> new TokenRefreshException(tokenRefreshRequest.getRefreshToken(), "Unexpected error" +
+                        " during token refresh. Please logout and login again."));
     }
 }
