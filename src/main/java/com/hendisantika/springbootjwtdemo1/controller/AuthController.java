@@ -38,10 +38,24 @@ public class AuthController {
     private final JwtTokenProvider tokenProvider;
     private final ApplicationEventPublisher applicationEventPublisher;
 
+    /**
+     * Checks is a given email is in use or not.
+     */
     @Operation(summary = "Checks if the given email is in use")
     @GetMapping("/checkEmailInUse")
     public ResponseEntity checkEmailInUse(@Param(value = "Email id to check against") @RequestParam("email") String email) {
         Boolean emailExists = authService.emailAlreadyExists(email);
         return ResponseEntity.ok(new ApiResponse(true, emailExists.toString()));
+    }
+
+    /**
+     * Checks is a given username is in use or not.
+     */
+    @Operation(summary = "Checks if the given username is in use")
+    @GetMapping("/checkUsernameInUse")
+    public ResponseEntity checkUsernameInUse(@Param(value = "Username to check against") @RequestParam(
+            "username") String username) {
+        Boolean usernameExists = authService.usernameAlreadyExists(username);
+        return ResponseEntity.ok(new ApiResponse(true, usernameExists.toString()));
     }
 }
