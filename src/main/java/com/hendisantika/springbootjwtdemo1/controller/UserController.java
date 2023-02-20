@@ -2,9 +2,11 @@ package com.hendisantika.springbootjwtdemo1.controller;
 
 import com.hendisantika.springbootjwtdemo1.annotation.CurrentUser;
 import com.hendisantika.springbootjwtdemo1.event.OnUserAccountChangeEvent;
+import com.hendisantika.springbootjwtdemo1.event.OnUserLogoutSuccessEvent;
 import com.hendisantika.springbootjwtdemo1.exception.UpdatePasswordException;
 import com.hendisantika.springbootjwtdemo1.model.CustomUserDetails;
 import com.hendisantika.springbootjwtdemo1.model.payload.ApiResponse;
+import com.hendisantika.springbootjwtdemo1.model.payload.LogOutRequest;
 import com.hendisantika.springbootjwtdemo1.model.payload.UpdatePasswordRequest;
 import com.hendisantika.springbootjwtdemo1.service.AuthService;
 import com.hendisantika.springbootjwtdemo1.service.UserService;
@@ -16,6 +18,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -89,5 +92,22 @@ public class UserController {
                     return ResponseEntity.ok(new ApiResponse(true, "Password changed successfully"));
                 })
                 .orElseThrow(() -> new UpdatePasswordException("--Empty--", "No such user present."));
+    }
+
+    /**
+     * Log the user out from the app/device. Release the refresh token associated with the
+     * user device.
+     */
+    @PostMapping("/logout")
+    @Operation(summary = "Logs the specified user device and clears the refresh tokens associated with it")
+    public ResponseEntity logoutUser(@CurrentUser CustomUserDetails customUserDetails,
+                                     @Param(value = "The LogOutRequest payload") @Valid @RequestBody LogOutRequest logOutRequest) {
+        userService.logoutUser(customUserDetails, logOutRequest);
+        Object credentials = SecurityContextHolder.getContext().getAuthentication().getCredentials();
+
+        OnUserLogoutSuccessEvent logoutSuccessEvent = new OnUserLogoutSuccessEvent(customUserDetails.getEmail(),
+                credentials.toString(), logOutRequest);
+        applicationEventPublisher.publishEvent(logoutSuccessEvent);
+        return ResponseEntity.ok(new ApiResponse(true, "Log out successful"));
     }
 }
