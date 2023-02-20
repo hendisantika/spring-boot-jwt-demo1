@@ -1,7 +1,9 @@
 package com.hendisantika.springbootjwtdemo1.controller;
 
 import com.hendisantika.springbootjwtdemo1.event.OnGenerateResetLinkEvent;
+import com.hendisantika.springbootjwtdemo1.event.OnUserAccountChangeEvent;
 import com.hendisantika.springbootjwtdemo1.event.OnUserRegistrationCompleteEvent;
+import com.hendisantika.springbootjwtdemo1.exception.PasswordResetException;
 import com.hendisantika.springbootjwtdemo1.exception.PasswordResetLinkException;
 import com.hendisantika.springbootjwtdemo1.exception.UserLoginException;
 import com.hendisantika.springbootjwtdemo1.exception.UserRegistrationException;
@@ -10,6 +12,7 @@ import com.hendisantika.springbootjwtdemo1.model.payload.ApiResponse;
 import com.hendisantika.springbootjwtdemo1.model.payload.JwtAuthenticationResponse;
 import com.hendisantika.springbootjwtdemo1.model.payload.LoginRequest;
 import com.hendisantika.springbootjwtdemo1.model.payload.PasswordResetLinkRequest;
+import com.hendisantika.springbootjwtdemo1.model.payload.PasswordResetRequest;
 import com.hendisantika.springbootjwtdemo1.model.payload.RegistrationRequest;
 import com.hendisantika.springbootjwtdemo1.model.token.RefreshToken;
 import com.hendisantika.springbootjwtdemo1.security.JwtTokenProvider;
@@ -147,5 +150,26 @@ public class AuthController {
                 })
                 .orElseThrow(() -> new PasswordResetLinkException(passwordResetLinkRequest.getEmail(), "Couldn't " +
                         "create a valid token"));
+    }
+
+    /**
+     * Receives a new passwordResetRequest and sends the acknowledgement after
+     * changing the password to the user's mail through the event.
+     */
+    @PostMapping("/password/reset")
+    @Operation(summary = "Reset the password after verification and publish an event to send the acknowledgement " +
+            "email")
+    public ResponseEntity resetPassword(@Param(value = "The PasswordResetRequest payload") @Valid @RequestBody PasswordResetRequest passwordResetRequest) {
+
+        return authService.resetPassword(passwordResetRequest)
+                .map(changedUser -> {
+                    OnUserAccountChangeEvent onPasswordChangeEvent = new OnUserAccountChangeEvent(changedUser, "Reset" +
+                            " Password",
+                            "Changed Successfully");
+                    applicationEventPublisher.publishEvent(onPasswordChangeEvent);
+                    return ResponseEntity.ok(new ApiResponse(true, "Password changed successfully"));
+                })
+                .orElseThrow(() -> new PasswordResetException(passwordResetRequest.getToken(), "Error in resetting " +
+                        "password"));
     }
 }
