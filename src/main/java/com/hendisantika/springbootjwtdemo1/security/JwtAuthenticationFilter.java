@@ -1,8 +1,8 @@
 package com.hendisantika.springbootjwtdemo1.security;
 
 import com.hendisantika.springbootjwtdemo1.service.CustomUserDetailsService;
-import lombok.RequiredArgsConstructor;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,7 +29,6 @@ import java.util.List;
  * Time: 18:34
  * To change this template use File | Settings | File Templates.
  */
-@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final Logger log = Logger.getLogger(JwtAuthenticationFilter.class);
@@ -40,11 +39,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Value("${app.jwt.header.prefix}")
     private String tokenRequestHeaderPrefix;
 
-    private final JwtTokenProvider jwtTokenProvider;
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
-    private final JwtTokenValidator jwtTokenValidator;
+    @Autowired
+    private JwtTokenValidator jwtTokenValidator;
 
-    private final CustomUserDetailsService customUserDetailsService;
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
 
     /**
      * Filter the incoming request for a valid token in the request header
