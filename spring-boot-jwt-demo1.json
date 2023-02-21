@@ -1,0 +1,324 @@
+{
+  "info": {
+    "_postman_id": "cb2d48b5-a05b-4f9b-85d7-50f2d1f35f23",
+    "name": "JWT Auth",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Register a User",
+      "request": {
+        "method": "POST",
+        "header": [
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"email\": \"hendi@yopmail.com\",\n    \"password\": \"Naruto2023!\",\n    \"registerAsAdmin\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "localhost:8080/api/auth/register",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "auth",
+            "register"
+          ]
+        }
+      },
+      "response": [
+      ]
+    },
+    {
+      "name": "Reset Password link",
+      "request": {
+        "method": "POST",
+        "header": [
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"email\": \"hendi@yopmail.comd\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "localhost:8080/api/auth/password/resetlink",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "auth",
+            "password",
+            "resetlink"
+          ]
+        }
+      },
+      "response": [
+      ]
+    },
+    {
+      "name": "Refresh JWT Token for Logged In User",
+      "request": {
+        "method": "POST",
+        "header": [
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"refreshToken\": \"d029e0fa-80f5-4768-837c-7e85a0f94960\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "localhost:8080/api/auth/refresh",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "auth",
+            "refresh"
+          ]
+        }
+      },
+      "response": [
+      ]
+    },
+    {
+      "name": "Reset Password",
+      "request": {
+        "method": "POST",
+        "header": [
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"hendi@yopmail.com\",   \"password\": \"P1\",\n    \"confirmPassword\": \"P1\",\n    \"token\": \"63b047b9-e53c-4246-916e-2093e9b104e8\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "localhost:8080/api/auth/password/reset",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "auth",
+            "password",
+            "reset"
+          ]
+        }
+      },
+      "response": [
+      ]
+    },
+    {
+      "name": "User Me",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjM1NjE0NTY4LCJleHAiOjE2MzU2MTU0Njh9.d8CJYduoC44njutphODoezheSt_so3Doc9g1RSiMaDU_qJwY0_3Ym4092hFkHsh-jbyB_9i66LbwSEE-szAgEw",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "localhost:8080/api/user/me",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "user",
+            "me"
+          ]
+        }
+      },
+      "response": [
+      ]
+    },
+    {
+      "name": "Check Email in Use",
+      "request": {
+        "method": "GET",
+        "header": [
+        ],
+        "url": {
+          "raw": "localhost:8080/api/auth/checkEmailInUse?email=hendi@yopmail.com",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "auth",
+            "checkEmailInUse"
+          ],
+          "query": [
+            {
+              "key": "email",
+              "value": "hendi@yopmail.com"
+            }
+          ]
+        }
+      },
+      "response": [
+      ]
+    },
+    {
+      "name": "Admin Me",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjM1NjE0NTY4LCJleHAiOjE2MzU2MTU0Njh9.d8CJYduoC44njutphODoezheSt_so3Doc9g1RSiMaDU_qJwY0_3Ym4092hFkHsh-jbyB_9i66LbwSEE-szAgEw",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "localhost:8080/api/user/admins",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "user",
+            "admins"
+          ]
+        }
+      },
+      "response": [
+      ]
+    },
+    {
+      "name": "Logging in Valid User",
+      "request": {
+        "method": "POST",
+        "header": [
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"email\": \"hendi@yopmail.com\",\n    \"password\": \"P1\",\n    \"deviceInfo\": {\n        \"deviceId\": \"D1\",\n        \"deviceType\": \"DEVICE_TYPE_ANDROID\",\n        \"notificationToken\": \"N1\"\n    }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "localhost:8080/api/auth/login",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": [
+      ]
+    },
+    {
+      "name": "Logout User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjM1NjE1NTk5LCJleHAiOjE2MzU2MTY0OTl9.q6F3Z9vTl1QqQj6V4fChKhFelbIhr6XaBRbYx5Qm1veRR5zr33ta44TKcaJS_x2E26bljNyOPeSJ6Gekf5lZEQ",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{    \n    \"deviceInfo\": {\n        \"deviceId\": \"D1\",\n        \"deviceType\": \"DEVICE_TYPE_ANDROID\",\n        \"notificationToken\": \"N1\"\n    }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "localhost:8080/api/user/logout",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "user",
+            "logout"
+          ]
+        }
+      },
+      "response": [
+      ]
+    },
+    {
+      "name": "Verifying User Email",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"email\": \"a@b.com\",\n    \"password\": \"HI12\",\n    \"deviceInfo\": {\n        \"deviceId\": \"D1\",\n        \"deviceType\": \"DEVICE_TYPE_ANDROID\",\n        \"notificationToken\": \"N1\"\n    }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "localhost:8080/api/auth/registrationConfirmation?token=857c2a3c-636c-4494-bd2e-8a05e59f4860",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "auth",
+            "registrationConfirmation"
+          ],
+          "query": [
+            {
+              "key": "token",
+              "value": "857c2a3c-636c-4494-bd2e-8a05e59f4860"
+            }
+          ]
+        }
+      },
+      "response": [
+      ]
+    }
+  ]
+}
