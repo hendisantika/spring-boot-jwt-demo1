@@ -24,7 +24,7 @@
 		<spring.boot.version>2.7.8</spring.boot.version>
 		<freemarker.version>2.3.28</freemarker.version>
 		<swagger.version>3.0.0</swagger.version>
-		<expiring.map.version>0.5.10</expiring.map.version>
+		<expiring.map.version>0.5.11</expiring.map.version>
 		<junit5.version>5.9.0</junit5.version>
 
 		<!--Sonar / Code Coverage-->
