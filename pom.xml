@@ -33,7 +33,7 @@
 		<sonar.jacoco.reportPaths>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPaths>
 		<surefire.version>2.19.1</surefire.version>
 		<sonar.language>java</sonar.language>
-		<jacoco.version>0.8.12</jacoco.version>
+		<jacoco.version>0.8.13</jacoco.version>
 		<sonar.exclusions>**/*Configuration.java,**/*Exception.java,**/conf/**/*,**/model/**/*</sonar.exclusions>
 	</properties>
 	<dependencies>
